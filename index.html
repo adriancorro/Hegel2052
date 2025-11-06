@@ -1,207 +1,124 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hegel2052 - AI Philosopher</title>
 
-  <title>Hegel2052 — An AI born from the thought of Hegel</title>
-  <link rel="canonical" href="https://hegel2052.com/" />
-  <link rel="alternate" hreflang="en" href="https://hegel2052.com/" />
-  <link rel="alternate" hreflang="es" href="https://hegel2052.com/es/" />
+    <meta name="description" content="Interactúa con una inteligencia artificial basada en el pensamiento del filósofo Hegel, adaptado al mundo actual.">
+    <meta name="keywords" content="Hegel, IA, filosofía, inteligencia artificial, hegel2052">
+    <meta name="author" content="Hegel2052 AI">
 
-  <meta name="description" content="Hegel2052 — An AI voice and assistant inspired by the thought of G.W.F. Hegel. Conversational interface in English & Spanish." />
-  <meta name="keywords" content="Hegel, AI, filosofía, Hegel2052, inteligencia artificial, pensamiento hegeliano, IA filosófica" />
-  <meta name="language" content="en, es" />
-  <meta name="robots" content="index, follow" />
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
 
-  <meta property="og:site_name" content="Hegel2052" />
-  <meta property="og:title" content="Hegel2052 — An AI born from the thought of Hegel" />
-  <meta property="og:description" content="An interactive AI voice that speaks like the philosopher Hegel, available in English and Spanish." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://hegel2052.com/" />
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-top: 40px;
+            animation: glow 2s infinite alternate;
+            letter-spacing: 2px;
+        }
 
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Hegel2052 — An AI born from the thought of Hegel" />
-  <meta name="twitter:description" content="An AI voice and assistant inspired by Hegel. Bilingual (EN/ES) conversational demo." />
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #4bf0ff; }
+            to   { text-shadow: 0 0 20px #00bcd4; }
+        }
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "url": "https://hegel2052.com/",
-    "name": "Hegel2052",
-    "description": "An AI voice and assistant inspired by the thought of G.W.F. Hegel. English & Spanish interface."
-  }
-  </script>
+        .container {
+            margin-top: 40px;
+            width: 90%;
+            max-width: 700px;
+        }
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            resize: none;
+            font-size: 1rem;
+            outline: none;
+        }
 
-  <style>
-    :root{
-      --bg:#05060a;
-      --panel: rgba(255,255,255,0.03);
-      --accent1: #6fffe9;
-      --accent2: #7a7aff;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(122,122,255,0.08), transparent),
-                  radial-gradient(800px 400px at 90% 90%, rgba(111,255,233,0.04), transparent),
-                  var(--bg);
-      color: #e8eefc;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:2rem;
-    }
+        button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 12px;
+            background: #00c6ff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-    .card{
-      width:100%;
-      max-width:980px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:18px;
-      padding:3rem;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.03);
-      position:relative;
-      overflow:hidden;
-    }
+        button:hover {
+            background: #0099cc;
+        }
 
-    .hero{
-      display:grid;
-      grid-template-columns: 1fr 320px;
-      gap:1.5rem;
-      align-items:center;
-    }
-
-    .title{
-      font-family: 'Orbitron', sans-serif;
-      font-weight:700;
-      letter-spacing:0.06em;
-      font-size: clamp(26px, 6vw, 48px);
-      line-height:1.02;
-      margin:0 0 0.6rem 0;
-      background: linear-gradient(90deg, var(--accent1), var(--accent2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: glow 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow{
-      from{text-shadow: 0 0 6px rgba(111,255,233,0.12), 0 0 30px rgba(122,122,255,0.04)}
-      to{ text-shadow: 0 0 18px rgba(111,255,233,0.20), 0 0 60px rgba(122,122,255,0.09)}
-    }
-
-    .subtitle{
-      margin:0;
-      color: #bcd3ff;
-      font-size:clamp(14px,2.2vw,18px);
-    }
-
-    .glass{
-      background: var(--panel);
-      padding:1rem;
-      border-radius:12px;
-      text-align:center;
-      backdrop-filter: blur(6px) saturate(120%);
-    }
-
-    .rings{position:absolute; inset:0; pointer-events:none}
-    .ring{position:absolute; border-radius:999px; opacity:0.06; filter:blur(20px)}
-    .r1{width:520px;height:520px; right:-120px; top:-140px; background:linear-gradient(180deg, var(--accent2), transparent)}
-    .r2{width:360px;height:360px; left:-80px; bottom:-120px; background:linear-gradient(180deg, var(--accent1), transparent)}
-
-    .controls{display:flex; flex-direction:column; gap:0.8rem}
-    .lang-sel{display:flex; gap:0.5rem; justify-content:center}
-    .btn{border:0; padding:0.55rem 0.9rem; border-radius:10px; font-weight:600; cursor:pointer; background:rgba(255,255,255,0.03); color:inherit}
-    .btn.primary{background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#001;}
-
-    @media (max-width:820px){
-      .hero{grid-template-columns:1fr;}
-      .glass{order:2}
-    }
-
-    .typewrap{font-family:'Orbitron',sans-serif; font-size:clamp(18px,3.1vw,28px); letter-spacing:0.04em;}
-    .type{
-      display:inline-block;
-      color:transparent;
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));
-      -webkit-background-clip:text; background-clip:text;
-    }
-    .cursor{display:inline-block; width:10px; height:1.1em; background:white; opacity:0.9; margin-left:6px; animation: blink 1s steps(2) infinite}
-    @keyframes blink{50%{opacity:0}}
-
-    .reveal{opacity:0; transform: translateY(8px); animation: reveal 1s forwards; animation-delay:0.4s}
-    @keyframes reveal{to{opacity:1; transform:none}}
-
-    footer{margin-top:1.5rem; font-size:13px; opacity:0.7; text-align:center}
-  </style>
+        .response-box {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            min-height: 150px;
+            white-space: pre-wrap;
+            background: rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
 
 <body>
-  <div class="card">
-    <div class="rings"><div class="ring r1"></div><div class="ring r2"></div></div>
 
-    <div class="hero">
-      <div>
-        <h1 class="title">Hegel2052</h1>
-        <p class="subtitle">A conversational AI voice inspired by G.W.F. Hegel — English & Spanish.</p>
+    <h1>Una IA creada por el pensamiento de Hegel</h1>
 
-        <div style="height:20px"></div>
+    <div class="container">
+        <textarea id="userPrompt" placeholder="Escribe aquí lo que deseas preguntarle a Hegel..."></textarea>
+        <button onclick="sendToHegel()">Preguntar a Hegel IA</button>
 
-        <div class="typewrap reveal">
-          <span class="type" id="headline">An AI created from the thought of Hegel.</span>
-          <span class="cursor"></span>
-        </div>
-
-        <p style="margin-top:1rem; color:#a9bff9; max-width:66%;">Interact with Hegel2052: the AI that frames answers in dialectical form.</p>
-
-        <div class="controls" style="margin-top:1.2rem">
-          <div class="lang-sel">
-            <button class="btn" onclick="setLang('en')">English</button>
-            <button class="btn" onclick="setLang('es')">Español</button>
-            <a class="btn primary" href="#">Launch demo</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="glass">
-        <h3 style="margin:0 0 0.5rem 0;">Live demo (placeholder)</h3>
-        <p style="margin:0 0 1rem 0; font-size:14px">Integrate your chat backend here.</p>
-        <div style="display:flex; gap:0.6rem; justify-content:center">
-          <button class="btn" onclick="speakSample()">Play sample</button>
-        </div>
-      </div>
+        <div id="response" class="response-box"></div>
     </div>
 
-    <footer>
-      © Hegel2052 — <a href="/privacy.html" style="color:inherit;">Privacy</a>
-    </footer>
-  </div>
+    <script>
+        async function sendToHegel() {
+            const input = document.getElementById("userPrompt").value;
+            const responseBox = document.getElementById("response");
+            
+            if (!input.trim()) {
+                responseBox.textContent = "Escribe una pregunta primero.";
+                return;
+            }
 
-  <script>
-    function setLang(l){
-      if(l==='es'){
-        document.documentElement.lang='es';
-        document.getElementById('headline').textContent='Una IA creada por el pensamiento de Hegel.';
-      } else {
-        document.documentElement.lang='en';
-        document.getElementById('headline').textContent='An AI created from the thought of Hegel.';
-      }
-    }
+            responseBox.textContent = "Pensando como Hegel...";
 
-    function speakSample(){
-      if(!('speechSynthesis' in window)){ alert('No speech synthesis'); return; }
-      const u = new SpeechSynthesisUtterance(
-        document.getElementById('headline').textContent
-      );
-      u.lang = document.documentElement.lang || 'en-US';
-      speechSynthesis.speak(u);
-    }
-  </script>
+            try {
+                const res = await fetch("/api/hegel", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userPrompt: input
+                    })
+                });
+
+                const data = await res.json();
+                responseBox.textContent = data.reply;
+            } catch (error) {
+                responseBox.textContent = "Error al conectar con el servidor.";
+            }
+        }
+    </script>
+
 </body>
 </html>
