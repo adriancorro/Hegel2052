@@ -11,8 +11,12 @@ export async function POST(req) {
         { role: "user", content: prompt }
       ]
     });
-    return new Response(JSON.stringify({ result: completion.choices[0].message.content }), { status: 200, headers: { "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({ result: completion.choices[0].message.content }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (e) {
+    console.error(e);
     return new Response(JSON.stringify({ error: "Error en el servidor" }), { status: 500 });
   }
 }
