@@ -9,7 +9,7 @@ export async function POST(req) {
     });
 
     const completion = await client.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -23,7 +23,7 @@ export async function POST(req) {
     });
 
     return new Response(
-      JSON.stringify({ result: completion.choices[0].message.content }),
+      JSON.stringify({ response: completion.choices[0].message.content }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
 
