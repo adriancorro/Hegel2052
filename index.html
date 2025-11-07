@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hegel 2052 — Neural Interface</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
+    :root{
+      --bg:#04050a;
+      --panel: rgba(10,20,30,0.5);
+      --accent1:#00f6ff;
+      --accent2:#7a7aff;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, 'Orbitron', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:
+        radial-gradient(800px 400px at 10% 10%, rgba(122,122,255,0.04), transparent),
+        radial-gradient(1000px 600px at 90% 90%, rgba(0,246,255,0.03), transparent),
+        var(--bg);
+      color:#cfefff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:980px;
+      border-radius:16px;
+      padding:28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    .glow-blob{position:absolute;border-radius:999px;filter:blur(70px);opacity:0.12}
+    .b1{width:520px;height:520px;right:-120px;top:-140px;background:linear-gradient(180deg,var(--accent2),transparent)}
+    .b2{width:360px;height:360px;left:-80px;bottom:-120px;background:linear-gradient(180deg,var(--accent1),transparent)}
+
+    h1{
+      margin:0 0 12px 0;
+      font-family: 'Orbitron', sans-serif;
+      font-weight:800;
+      font-size:clamp(22px,4vw,40px);
+      letter-spacing:0.06em;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      text-shadow:0 0 18px rgba(0,246,255,0.06);
+    }
+
+    .subtitle{margin:0 0 18px 0;color:#9fbefb;opacity:0.9}
+
+    .panel{
+      display:grid;
+      grid-template-columns:1fr 360px;
+      gap:18px;
+      align-items:start;
+    }
+
+    .left{padding:8px}
+    textarea{
+      width:100%;
+      min-height:140px;
+      padding:14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.04);
+      background:rgba(0,0,0,0.45);
+      color:inherit;
+      font-size:15px;
+      resize:vertical;
+      outline:none;
+    }
+
+    .controls{display:flex;gap:10px;margin-top:12px}
+    .btn{
+      padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700;
+      background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#031018;
+      box-shadow:0 6px 20px rgba(122,122,255,0.06);
+    }
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#bfeeff}
+
+    .right{
+      background:var(--glass);
+      border-radius:12px;padding:14px;backdrop-filter:blur(6px);
+      border:1px solid rgba(255,255,255,0.02);
+      min-height:220px;
+    }
+    .status{font-size:13px;opacity:0.85;margin-top:8px}
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:#dff;
+      font-family:Inter, monospace;
+      font-size:14px;
+    }
+
+    footer{margin-top:14px;text-align:center;font-size:13px;color:#9fbefb;opacity:0.85}
+
+    /* animations */
+    @keyframes pulse {
+      0%{transform:scale(0.995);opacity:0.98}
+      50%{transform:scale(1.005);opacity:1}
+      100%{transform:scale(0.995);opacity:0.98}
+    }
+    .wrap{animation:pulse 6s ease-in-out infinite}
+
+    @media(max-width:900px){
+      .panel{grid-template-columns:1fr}
+      .right{order:2}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <div class="glow-blob b1" aria-hidden="true"></div>
+    <div class="glow-blob b2" aria-hidden="true"></div>
+
+    <h1>Hegel 2052 — Neural Interface</h1>
+    <p class="subtitle">Una IA que responde como Hegel, adaptada al mundo actual — escribe tu consulta y espera la respuesta.</p>
+
+    <div class="panel">
+      <div class="left">
+        <textarea id="prompt" placeholder="Escribe aquí tu pregunta para Hegel..."></textarea>
+        <div class="controls">
+          <button class="btn" id="sendBtn">Preguntar a Hegel</button>
+          <button class="btn ghost" id="clearBtn">Limpiar</button>
+        </div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </div>
+
+      <div class="right" aria-live="polite" id="reply">
+        <pre id="out">La respuesta aparecerá aquí...</pre>
+      </div>
+    </div>
+
+    <footer>hegel2052 — sin publicidad · sin suscripciones</footer>
+  </div>
+
+  <script>
+    const sendBtn = document.getElementById('sendBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const promptEl = document.getElementById('prompt');
+    const out = document.getElementById('out');
+    const status = document.getElementById('status');
+
+    clearBtn.onclick = () => { promptEl.value=''; out.textContent='La respuesta aparecerá aquí...'; status.textContent=''; };
+
+    sendBtn.onclick = async () => {
+      const p = promptEl.value.trim();
+      if(!p){ status.textContent='Escribe una pregunta primero.'; return; }
+      status.textContent = 'Consultando a Hegel...';
+      sendBtn.disabled = true;
+
+      try{
+        const res = await fetch('/api/hegel', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ prompt: p })
+        });
+        const data = await res.json();
+        if(data.result) out.textContent = data.result;
+        else if(data.error) out.textContent = 'Error: ' + data.error;
+        else out.textContent = 'Respuesta inesperada.';
+      }catch(e){
+        out.textContent = 'Error al conectar con el servidor.';
+      }finally{
+        status.textContent = '';
+        sendBtn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
