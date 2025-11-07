@@ -1,8 +1,1 @@
-{
-  "name": "hegel2052-api",
-  "version": "1.0.0",
-  "type": "module",
-  "dependencies": {
-    "openai": "latest"
-  }
-}
+{ "name": "hegel2052-api", "version": "1.0.0", "type": "module", "dependencies": { "openai": "latest" } }
