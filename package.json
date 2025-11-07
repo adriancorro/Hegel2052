@@ -5,5 +5,5 @@
   "dependencies": {
     "openai": "latest"
   }
-  // NO hay "scripts": { "build": "next build" }
+
 }
