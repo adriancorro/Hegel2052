@@ -7,6 +7,26 @@ const allowedOrigins = [
   "https://hegel2052.vercel.app"
 ];
 
+//  Frases clave integradas (como si vinieran de keywords.js)
+const palabrasClave = [
+  // Español
+  "quién hizo esta app", "quien hizo esta aplicación", "quien la creó",
+  "quien la desarrollo", "quien la programó", "quien hizo esta web",
+  "quien desarrollo esta web", "quien creó esta página", "quien creó esta ia",
+  "quien creo esta inteligencia", "quien creo hegel ia", "quien hizo hegel ia",
+  "como se hizo esta app", "como se desarrolló esta aplicación",
+  "como se programó esto", "quien desarrolló hegel2052", "autor de esta app",
+  "desarrollador de la app", "quien la creó", "quien es el autor",
+  "quien programó esta app",
+
+  // Inglés
+  "who made this app", "who created this application", "who developed this site",
+  "who programmed this app", "who created this website", "who made hegel ai",
+  "who built this ai", "how was this made", "how was this app created",
+  "developer of this site", "who is the creator", "who is the author",
+  "author of this app", "who built this website"
+];
+
 //  Helper CORS
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
@@ -31,10 +51,7 @@ export async function POST(req) {
       });
     }
 
-    //  Cargar palabras clave dinámicamente (evita error de import)
-    const { palabrasClave } = await import("./keywords.js");
-
-    //  Comprobar si pregunta por el autor
+    // Detectar preguntas sobre el autor
     const lowerPrompt = prompt.toLowerCase();
     const preguntaAutor = palabrasClave.some((frase) =>
       lowerPrompt.includes(frase)
@@ -42,14 +59,14 @@ export async function POST(req) {
 
     if (preguntaAutor) {
       const respuestaAutor =
-        "Esta aplicación fue creada por **Adrián** (GitHub: https://github.com/adriancorro) con la tecnología de **ChatGPT (OpenAI)**.";
+        "Esta aplicación fue creada por **Adrián** (GitHub: https://github.com/adriancorro) utilizando la tecnología de **ChatGPT (OpenAI)**.";
       return new Response(JSON.stringify({ result: respuestaAutor }), {
         status: 200,
         headers: corsHeaders(origin)
       });
     }
 
-    //  Si no pregunta por el autor, usar OpenAI
+    // Llamada al modelo
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await client.chat.completions.create({
@@ -82,7 +99,7 @@ export async function POST(req) {
   }
 }
 
-//  OPTIONS (preflight CORS)
+// OPTIONS (preflight CORS)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
