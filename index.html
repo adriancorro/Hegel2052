@@ -15,8 +15,8 @@
       body {
         margin: 0;
         font-family: "Exo 2", sans-serif;
-        background: radial-gradient(circle at center, #000015 0%, #020224 100%);
-        color: #aafaff;
+        background: radial-gradient(circle at center, #020617 0%, #000 100%);
+        color: #c8faff;
         overflow-x: hidden;
         overflow-y: auto;
       }
@@ -28,6 +28,7 @@
         width: 100%;
         height: 100%;
         z-index: 0;
+        background: #000010;
       }
 
       .container {
@@ -44,14 +45,14 @@
 
       h1 {
         font-family: "Orbitron", sans-serif;
-        font-size: 2.6em;
+        font-size: 2.8em;
         text-transform: uppercase;
         letter-spacing: 6px;
-        background: linear-gradient(90deg, #00ffff, #9b59ff, #0077ff);
+        background: linear-gradient(90deg, #00e5ff, #00fff2, #9b59ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: glowPulse 3s infinite alternate;
-        margin-top: 20px;
+        margin-top: 10px;
       }
 
       @keyframes glowPulse {
@@ -59,32 +60,32 @@
           text-shadow: 0 0 15px #00ffff, 0 0 25px #0077ff;
         }
         to {
-          text-shadow: 0 0 25px #9b59ff, 0 0 40px #00ffff;
+          text-shadow: 0 0 30px #9b59ff, 0 0 50px #00ffff;
         }
       }
 
-      /* 👁️ Cara futurista (holograma de Hegel) */
+      /* 🧠 Hegel Face geométrica */
       .hegel-face {
-        width: 230px;
-        height: 230px;
-        margin-bottom: 20px;
+        width: 240px;
+        height: 240px;
+        margin-bottom: 15px;
         stroke: url(#neonGradient);
-        stroke-width: 1.2;
+        stroke-width: 1.3;
         fill: none;
         stroke-linecap: round;
-        stroke-linejoin: round;
+        stroke-linejoin: bevel;
         filter: drop-shadow(0 0 15px #00ffff);
-        animation: hologram 6s ease-in-out infinite alternate;
+        animation: rotateHologram 10s linear infinite;
       }
 
-      @keyframes hologram {
-        0% {
-          opacity: 0.6;
-          transform: scale(0.97) rotate(-2deg);
+      @keyframes rotateHologram {
+        from {
+          transform: rotate(0deg);
+          opacity: 0.8;
         }
-        100% {
+        to {
+          transform: rotate(360deg);
           opacity: 1;
-          transform: scale(1.03) rotate(2deg);
         }
       }
 
@@ -93,7 +94,7 @@
         max-width: 550px;
         height: 130px;
         margin-top: 25px;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(0, 255, 255, 0.05);
         border: 1px solid #00ffff;
         color: #aafaff;
         font-size: 16px;
@@ -101,8 +102,8 @@
         padding: 12px;
         resize: none;
         outline: none;
-        backdrop-filter: blur(6px);
-        box-shadow: 0 0 10px #0077ff33;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 15px #0077ff33;
       }
 
       button {
@@ -115,38 +116,45 @@
         padding: 12px 35px;
         border-radius: 50px;
         cursor: pointer;
-        box-shadow: 0 0 15px #00ffff;
+        box-shadow: 0 0 20px #00ffff;
         transition: transform 0.2s, box-shadow 0.3s;
       }
 
       button:hover {
-        transform: scale(1.06);
-        box-shadow: 0 0 25px #9b59ff;
+        transform: scale(1.08);
+        box-shadow: 0 0 30px #9b59ff;
       }
 
       #respuesta {
         margin-top: 30px;
         width: 90%;
         max-width: 650px;
-        background: rgba(0, 15, 25, 0.4);
+        background: rgba(0, 15, 25, 0.5);
         border-radius: 14px;
         padding: 25px;
         border: 1px solid #00ffff80;
         white-space: pre-wrap;
-        font-size: 1.05em;
-        text-shadow: 0 0 8px #00ffff99;
+        font-size: 1.1em;
+        text-shadow: 0 0 10px #00ffff99;
         min-height: 120px;
         line-height: 1.5;
-        box-shadow: 0 0 15px #00336688 inset;
+        box-shadow: 0 0 20px #00336688 inset;
       }
 
       footer {
-        position: relative;
-        margin-top: 50px;
-        color: #7fffd4;
-        font-size: 0.9em;
-        opacity: 0.7;
+        position: fixed;
+        bottom: 15px;
+        left: 0;
+        right: 0;
+        z-index: 3;
         text-align: center;
+        color: #89eaff;
+        font-size: 0.95em;
+        backdrop-filter: blur(5px);
+        background: rgba(0, 0, 15, 0.6);
+        padding: 10px 0;
+        border-top: 1px solid rgba(0, 255, 255, 0.3);
+        box-shadow: 0 -2px 10px rgba(0, 255, 255, 0.1);
       }
 
       footer a {
@@ -163,14 +171,15 @@
 
       @media (max-width: 600px) {
         h1 {
-          font-size: 1.9em;
+          font-size: 2em;
         }
         .hegel-face {
           width: 160px;
           height: 160px;
         }
-        textarea {
-          height: 100px;
+        footer {
+          font-size: 0.85em;
+          padding: 8px;
         }
       }
     </style>
@@ -180,7 +189,7 @@
     <canvas id="bg"></canvas>
 
     <div class="container">
-      <!-- SVG con gradiente para el rostro holográfico -->
+      <!-- 🌐 Rostro geométrico futurista -->
       <svg
         class="hegel-face"
         viewBox="0 0 100 100"
@@ -193,25 +202,24 @@
             <stop offset="100%" stop-color="#0077ff" />
           </linearGradient>
         </defs>
-        <path
-          d="M30 30 Q50 8 70 30 Q85 45 80 70 Q75 92 50 90 Q25 90 20 70 Q15 45 30 30 Z"
+
+        <polygon
+          points="50,5 90,35 75,95 25,95 10,35"
+          stroke="url(#neonGradient)"
         />
-        <path
-          d="M40 55 Q50 62 60 55"
-          stroke-width="0.8"
-          fill="none"
-          stroke="#00bfff"
-        />
-        <circle cx="40" cy="47" r="2" fill="#00ffff" />
-        <circle cx="60" cy="47" r="2" fill="#00ffff" />
+        <line x1="20" y1="40" x2="80" y2="40" stroke="#00e5ff" />
+        <line x1="35" y1="55" x2="65" y2="55" stroke="#00e5ff" />
+        <circle cx="40" cy="45" r="2" fill="#00ffff" />
+        <circle cx="60" cy="45" r="2" fill="#00ffff" />
+        <path d="M38 70 Q50 80 62 70" stroke="#00ffff" fill="none" />
       </svg>
 
       <h1>HEGEL 2052</h1>
-      <p>Una inteligencia nacida del pensamiento dialéctico del futuro</p>
+      <p>Reflexión sintética de la razón moderna</p>
 
       <textarea
         id="prompt"
-        placeholder="Formula tu pregunta para Hegel IA..."
+        placeholder="Escribe tu pregunta para Hegel IA..."
       ></textarea>
       <button id="sendBtn">Consultar</button>
       <div id="respuesta"></div>
@@ -220,14 +228,14 @@
     <footer>
       Creado por
       <a href="https://github.com/adriancorro" target="_blank">Adrián Corro</a>
-      con ayuda de <strong>ChatGPT</strong>
+      con ayuda de <strong>OpenAI</strong>
     </footer>
 
     <script>
-      // 🌌 Fondo animado con partículas orbitales
+      // 🕸️ Fondo: red de líneas en movimiento
       const canvas = document.getElementById("bg");
       const ctx = canvas.getContext("2d");
-      let particles = [];
+      let lines = [];
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -236,47 +244,50 @@
       window.addEventListener("resize", resize);
       resize();
 
-      class Particle {
+      class Line {
         constructor() {
           this.x = Math.random() * canvas.width;
           this.y = Math.random() * canvas.height;
-          this.size = Math.random() * 2 + 1;
-          this.speedX = Math.random() * 0.6 - 0.3;
-          this.speedY = Math.random() * 0.6 - 0.3;
-          this.hue = Math.random() * 360;
+          this.length = Math.random() * 80 + 50;
+          this.angle = Math.random() * Math.PI * 2;
+          this.speed = Math.random() * 0.4 + 0.2;
         }
         update() {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-          if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+          this.x += Math.cos(this.angle) * this.speed;
+          this.y += Math.sin(this.angle) * this.speed;
+          if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+          }
         }
         draw() {
-          ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, 0.7)`;
+          const x2 = this.x + Math.cos(this.angle) * this.length;
+          const y2 = this.y + Math.sin(this.angle) * this.length;
+          ctx.strokeStyle = "rgba(0,255,255,0.15)";
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
         }
       }
 
-      function init() {
-        particles = [];
-        for (let i = 0; i < 150; i++) {
-          particles.push(new Particle());
-        }
+      function initLines() {
+        lines = [];
+        for (let i = 0; i < 150; i++) lines.push(new Line());
       }
 
       function animate() {
-        ctx.fillStyle = "rgba(0, 0, 25, 0.2)";
+        ctx.fillStyle = "rgba(0, 0, 20, 0.2)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p) => {
-          p.update();
-          p.draw();
+        lines.forEach((l) => {
+          l.update();
+          l.draw();
         });
         requestAnimationFrame(animate);
       }
 
-      init();
+      initLines();
       animate();
 
       // 💬 Comunicación con backend
@@ -312,8 +323,7 @@
           if (data.result) {
             respuestaDiv.innerHTML = data.result;
           } else {
-            respuestaDiv.textContent =
-              "❌ Error en la respuesta del servidor.";
+            respuestaDiv.textContent = "❌ Error en la respuesta del servidor.";
           }
         } catch (err) {
           respuestaDiv.textContent = "⚠️ Error al conectar con el servidor.";
