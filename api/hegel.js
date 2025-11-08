@@ -1,52 +1,11 @@
 import OpenAI from "openai";
+import { palabrasClave } from "./keywords.js"; // ✅ Ruta corregida para Vercel
 
 // 🌐 Lista de dominios permitidos
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
   "https://hegel2052.vercel.app"
-];
-
-// 🧠 Frases clave integradas (ES + EN)
-const palabrasClave = [
-  // Español
-  "quién hizo esta app",
-  "quien hizo esta aplicación",
-  "quien la creó",
-  "quien la desarrollo",
-  "quien la programó",
-  "quien hizo esta web",
-  "quien desarrollo esta web",
-  "quien creó esta página",
-  "quien creó esta ia",
-  "quien creo esta inteligencia",
-  "quien creo hegel ia",
-  "quien hizo hegel ia",
-  "como se hizo esta app",
-  "como se desarrolló esta aplicación",
-  "como se programó esto",
-  "quien desarrolló hegel2052",
-  "autor de esta app",
-  "desarrollador de la app",
-  "quien la creó",
-  "quien es el autor",
-  "quien programó esta app",
-
-  // Inglés
-  "who made this app",
-  "who created this application",
-  "who developed this site",
-  "who programmed this app",
-  "who created this website",
-  "who made hegel ai",
-  "who built this ai",
-  "how was this made",
-  "how was this app created",
-  "developer of this site",
-  "who is the creator",
-  "who is the author",
-  "author of this app",
-  "who built this website"
 ];
 
 // 🛡️ Helper CORS
@@ -73,7 +32,7 @@ export async function POST(req) {
       });
     }
 
-    //  Comprobar si pregunta por el autor
+    // 🧩 Comprobar si pregunta por el autor
     const lowerPrompt = prompt.toLowerCase();
     const preguntaAutor = palabrasClave.some((frase) =>
       lowerPrompt.includes(frase)
