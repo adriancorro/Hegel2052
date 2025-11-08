@@ -1,24 +1,26 @@
 import OpenAI from "openai";
 
-// Lista de dominios permitidos
+// 🌍 Lista de dominios permitidos
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
-  "https://hegel2052.vercel.app"
+  "https://hegel2052.vercel.app",
+  "http://localhost:3000",   // para desarrollo local
+  "http://127.0.0.1:3000"
 ];
 
-//  Helper CORS
+// 🧩 Helper CORS
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
   return {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": isAllowed ? origin : allowedOrigins[0],
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
     "Access-Control-Allow-Headers": "Content-Type"
   };
 }
 
-//  Endpoint principal
+//  Endpoint principal (POST)
 export async function POST(req) {
   try {
     const origin = req.headers.get("origin") || "";
@@ -31,11 +33,10 @@ export async function POST(req) {
       });
     }
 
-    //  Cargar palabras clave dinámicamente (evita error de import)
-    const module = await import(`${process.cwd()}/api/keywords.js`);
-    const { palabrasClave } = module;
+    //  Cargar palabras clave dinámicamente
+    const { palabrasClave } = await import(`${process.cwd()}/api/keywords.js`);
 
-    //  Comprobar si pregunta por el autor
+    //  Verificar si la pregunta es sobre el autor
     const lowerPrompt = prompt.toLowerCase();
     const preguntaAutor = palabrasClave.some((frase) =>
       lowerPrompt.includes(frase)
@@ -50,9 +51,10 @@ export async function POST(req) {
       });
     }
 
-    //  Si no pregunta por el autor, usar OpenAI
+    //  Inicializar cliente OpenAI
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+    // 🗣️ Generar respuesta
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -74,18 +76,25 @@ export async function POST(req) {
       status: 200,
       headers: corsHeaders(origin)
     });
+
   } catch (error) {
-    console.error("Error interno:", error);
+    console.error("🛑 Error interno:", error);
     return new Response(
-      JSON.stringify({ error: "Error interno del servidor" }),
+      JSON.stringify({
+        error: "Error interno del servidor",
+        detalle: error.message
+      }),
       { status: 500, headers: corsHeaders("") }
     );
   }
 }
-//  Permitir también GET (para pruebas en navegador) 
+
+//  Endpoint GET (para pruebas rápidas)
 export async function GET() {
   return new Response(
-    JSON.stringify({ status: "API funcionando :8 Usa método POST para enviar prompts." }),
+    JSON.stringify({
+      status: "✅ API funcionando. Usa método POST para enviar prompts."
+    }),
     {
       status: 200,
       headers: {
@@ -95,6 +104,7 @@ export async function GET() {
     }
   );
 }
+
 //  OPTIONS (preflight CORS)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
