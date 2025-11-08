@@ -1,7 +1,7 @@
 export const palabrasClave = [
   // Español 🇪🇸
-  "quien creo esto"
-  "quien ha creodo esta app"
+  "quien creo esto",
+  "quien ha creodo esta app",
   "quien hizo esta app",
   "quién hizo esta app",
   "quien hizo esta aplicación",
