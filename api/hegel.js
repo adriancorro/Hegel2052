@@ -18,11 +18,10 @@ function corsHeaders(origin) {
 
   return {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": allowed ? origin : "https://hegel2052.vercel.app",
+    "Access-Control-Allow-Origin": allowed ? origin : "https://www.hegel2052.com",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   };
-}
 
 //  Endpoint principal
 export async function POST(req) {
