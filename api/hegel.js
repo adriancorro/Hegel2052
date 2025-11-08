@@ -6,6 +6,7 @@ const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
   "https://hegel2052.vercel.app"
+  "https://www.hegel2052.vercel.app"
 ];
 
 //  Helper avanzado para CORS
