@@ -142,26 +142,33 @@
       }
 
       footer {
-        margin-top: 80px;
-        padding: 25px 0;
-        color: #89eaff;
-        font-size: 0.95em;
-        background: rgba(0, 0, 20, 0.4);
-        border-top: 1px solid rgba(0, 255, 255, 0.2);
+        margin-top: 100px;
+        padding: 30px 10px;
         text-align: center;
-        box-shadow: 0 -2px 15px rgba(0, 255, 255, 0.1);
+        background: radial-gradient(circle at center, rgba(0, 10, 25, 0.7), rgba(0, 0, 0, 0.9));
+        border-top: 1px solid rgba(0, 255, 255, 0.3);
+        box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.2);
+        font-size: 1em;
+        font-weight: 500;
+      }
+
+      footer span {
+        color: #00ffff;
+        font-weight: bold;
+        text-shadow: 0 0 8px #00ffff;
       }
 
       footer a {
         color: #00ffff;
         text-decoration: none;
         font-weight: bold;
-        transition: color 0.3s;
+        text-shadow: 0 0 8px #00ffff;
+        transition: 0.3s;
       }
 
       footer a:hover {
         color: #9b59ff;
-        text-shadow: 0 0 10px #9b59ff;
+        text-shadow: 0 0 15px #9b59ff;
       }
 
       @media (max-width: 600px) {
@@ -173,8 +180,8 @@
           height: 160px;
         }
         footer {
-          font-size: 0.85em;
-          padding: 20px 10px;
+          font-size: 0.9em;
+          padding: 20px;
         }
       }
     </style>
@@ -184,7 +191,7 @@
     <canvas id="bg"></canvas>
 
     <div class="container">
-      <!-- 🌐 Rostro sabio sonriente -->
+      <!-- 🧠 Rostro de Hegel sonriente -->
       <svg
         class="hegel-face"
         viewBox="0 0 100 100"
@@ -197,24 +204,24 @@
           </linearGradient>
         </defs>
 
-        <!-- Contorno más suave -->
+        <!-- contorno -->
         <path
           d="M25 25 L75 25 Q90 40 80 75 Q70 95 50 95 Q30 95 20 75 Q10 40 25 25 Z"
           stroke="url(#neonGradient)"
         />
-        <!-- Cejas sabias -->
+        <!-- cejas -->
         <path d="M32 38 L45 36 M55 36 L68 38" stroke="#00eaff" />
-        <!-- Ojos -->
+        <!-- ojos -->
         <circle cx="38" cy="45" r="2" fill="#00ffff" />
         <circle cx="62" cy="45" r="2" fill="#00ffff" />
-        <!-- Sonrisa leve -->
+        <!-- sonrisa -->
         <path
-          d="M35 67 Q50 75 65 67"
+          d="M35 67 Q50 76 65 67"
           stroke="#00ffff"
           fill="none"
           stroke-width="0.8"
         />
-        <!-- Triángulo frontal -->
+        <!-- triángulo de sabiduría -->
         <polygon
           points="50,15 42,25 58,25"
           stroke="#8b5cff"
@@ -234,14 +241,15 @@
       <div id="respuesta"></div>
     </div>
 
+    <!-- 🌐 Footer visible -->
     <footer>
       Creado por
-      <a href="https://github.com/adriancorro" target="_blank">Adrián Corro</a>
-      con ayuda de <strong>OpenAI</strong>
+      <a href="https://github.com/adriancorro" target="_blank">Adrian Corro</a>
+      con ayuda de <span>OpenAI</span>
     </footer>
 
     <script>
-      // 🔷 Fondo animado de líneas + meteorito
+      // 🔷 Fondo animado con meteorito
       const canvas = document.getElementById("bg");
       const ctx = canvas.getContext("2d");
       let lines = [];
@@ -321,7 +329,7 @@
           meteor = null;
       }
 
-      setInterval(spawnMeteor, 8000); // cada 8 segundos
+      setInterval(spawnMeteor, 8000);
 
       function animate() {
         ctx.fillStyle = "rgba(0, 0, 20, 0.25)";
