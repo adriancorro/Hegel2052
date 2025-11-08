@@ -63,7 +63,7 @@
         }
       }
 
-      /* 👁️ Hegel geométrico, rostro de sabio */
+      /* 👁️ Rostro geométrico: sabio sonriente */
       .hegel-face {
         width: 240px;
         height: 240px;
@@ -75,6 +75,18 @@
         stroke-linejoin: bevel;
         filter: drop-shadow(0 0 15px #00ffff);
         opacity: 0.9;
+        animation: facePulse 6s ease-in-out infinite alternate;
+      }
+
+      @keyframes facePulse {
+        from {
+          opacity: 0.8;
+          filter: drop-shadow(0 0 10px #00ffff);
+        }
+        to {
+          opacity: 1;
+          filter: drop-shadow(0 0 25px #8b5cff);
+        }
       }
 
       textarea {
@@ -134,7 +146,7 @@
         padding: 25px 0;
         color: #89eaff;
         font-size: 0.95em;
-        background: rgba(0, 0, 20, 0.5);
+        background: rgba(0, 0, 20, 0.4);
         border-top: 1px solid rgba(0, 255, 255, 0.2);
         text-align: center;
         box-shadow: 0 -2px 15px rgba(0, 255, 255, 0.1);
@@ -172,7 +184,7 @@
     <canvas id="bg"></canvas>
 
     <div class="container">
-      <!-- 🧩 Rostro geométrico de Hegel (sabio futurista) -->
+      <!-- 🌐 Rostro sabio sonriente -->
       <svg
         class="hegel-face"
         viewBox="0 0 100 100"
@@ -185,24 +197,24 @@
           </linearGradient>
         </defs>
 
-        <!-- contorno del rostro más anguloso -->
+        <!-- Contorno más suave -->
         <path
           d="M25 25 L75 25 Q90 40 80 75 Q70 95 50 95 Q30 95 20 75 Q10 40 25 25 Z"
           stroke="url(#neonGradient)"
         />
-        <!-- cejas / sabiduría -->
+        <!-- Cejas sabias -->
         <path d="M32 38 L45 36 M55 36 L68 38" stroke="#00eaff" />
-        <!-- ojos -->
+        <!-- Ojos -->
         <circle cx="38" cy="45" r="2" fill="#00ffff" />
         <circle cx="62" cy="45" r="2" fill="#00ffff" />
-        <!-- barba / boca filosófica -->
+        <!-- Sonrisa leve -->
         <path
-          d="M30 70 Q50 82 70 70"
+          d="M35 67 Q50 75 65 67"
           stroke="#00ffff"
           fill="none"
           stroke-width="0.8"
         />
-        <!-- frente triangular / símbolo de razón -->
+        <!-- Triángulo frontal -->
         <polygon
           points="50,15 42,25 58,25"
           stroke="#8b5cff"
@@ -212,7 +224,7 @@
       </svg>
 
       <h1>HEGEL 2052</h1>
-      <p>Reflexión dialéctica de la conciencia moderna</p>
+      <p>Reflexión dialéctica del espíritu moderno</p>
 
       <textarea
         id="prompt"
@@ -229,10 +241,11 @@
     </footer>
 
     <script>
-      // 🔷 Fondo animado de líneas cian
+      // 🔷 Fondo animado de líneas + meteorito
       const canvas = document.getElementById("bg");
       const ctx = canvas.getContext("2d");
       let lines = [];
+      let meteor = null;
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -265,7 +278,7 @@
         draw() {
           const x2 = this.x + Math.cos(this.angle) * this.length;
           const y2 = this.y + Math.sin(this.angle) * this.length;
-          ctx.strokeStyle = "rgba(0,255,255,0.1)";
+          ctx.strokeStyle = "rgba(0,255,255,0.08)";
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(this.x, this.y);
@@ -276,16 +289,48 @@
 
       function initLines() {
         lines = [];
-        for (let i = 0; i < 130; i++) lines.push(new Line());
+        for (let i = 0; i < 120; i++) lines.push(new Line());
       }
 
+      // 🌠 Meteorito futurista
+      function spawnMeteor() {
+        meteor = {
+          x: -50,
+          y: Math.random() * (canvas.height / 2),
+          speedX: Math.random() * 4 + 6,
+          speedY: Math.random() * 1 + 1,
+          trail: [],
+        };
+      }
+
+      function drawMeteor() {
+        if (!meteor) return;
+        meteor.trail.push({ x: meteor.x, y: meteor.y });
+        if (meteor.trail.length > 10) meteor.trail.shift();
+        ctx.beginPath();
+        for (let i = 0; i < meteor.trail.length; i++) {
+          const p = meteor.trail[i];
+          ctx.fillStyle = `rgba(0,255,255,${i / meteor.trail.length})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        meteor.x += meteor.speedX;
+        meteor.y += meteor.speedY;
+        if (meteor.x > canvas.width + 50 || meteor.y > canvas.height + 50)
+          meteor = null;
+      }
+
+      setInterval(spawnMeteor, 8000); // cada 8 segundos
+
       function animate() {
-        ctx.fillStyle = "rgba(0, 0, 20, 0.2)";
+        ctx.fillStyle = "rgba(0, 0, 20, 0.25)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         lines.forEach((l) => {
           l.update();
           l.draw();
         });
+        drawMeteor();
         requestAnimationFrame(animate);
       }
 
