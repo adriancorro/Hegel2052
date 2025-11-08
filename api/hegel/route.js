@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-// ✅ Función que maneja las peticiones POST (cuando el usuario hace "Preguntar")
+// Función que maneja las peticiones POST (cuando el usuario hace "Preguntar")
 export async function POST(req) {
   try {
     const { prompt } = await req.json();
