@@ -63,7 +63,6 @@
         }
       }
 
-      /* 👁️ Rostro geométrico: sabio sonriente */
       .hegel-face {
         width: 240px;
         height: 240px;
@@ -141,20 +140,19 @@
         box-shadow: 0 0 20px #00336688 inset;
       }
 
+      /* ✅ Footer ahora encima del canvas */
       footer {
-        margin-top: 100px;
-        padding: 30px 10px;
+        position: relative;
+        z-index: 2;
+        margin-top: 80px;
+        padding: 25px 10px;
         text-align: center;
-        background: radial-gradient(circle at center, rgba(0, 10, 25, 0.7), rgba(0, 0, 0, 0.9));
+        background: rgba(0, 20, 40, 0.6);
         border-top: 1px solid rgba(0, 255, 255, 0.3);
-        box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.2);
+        box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.1);
         font-size: 1em;
         font-weight: 500;
-      }
-
-      footer span {
-        color: #00ffff;
-        font-weight: bold;
+        color: #c8ffff;
         text-shadow: 0 0 8px #00ffff;
       }
 
@@ -162,7 +160,7 @@
         color: #00ffff;
         text-decoration: none;
         font-weight: bold;
-        text-shadow: 0 0 8px #00ffff;
+        text-shadow: 0 0 10px #00ffff;
         transition: 0.3s;
       }
 
@@ -191,7 +189,6 @@
     <canvas id="bg"></canvas>
 
     <div class="container">
-      <!-- 🧠 Rostro de Hegel sonriente -->
       <svg
         class="hegel-face"
         viewBox="0 0 100 100"
@@ -203,25 +200,19 @@
             <stop offset="100%" stop-color="#8b5cff" />
           </linearGradient>
         </defs>
-
-        <!-- contorno -->
         <path
           d="M25 25 L75 25 Q90 40 80 75 Q70 95 50 95 Q30 95 20 75 Q10 40 25 25 Z"
           stroke="url(#neonGradient)"
         />
-        <!-- cejas -->
         <path d="M32 38 L45 36 M55 36 L68 38" stroke="#00eaff" />
-        <!-- ojos -->
         <circle cx="38" cy="45" r="2" fill="#00ffff" />
         <circle cx="62" cy="45" r="2" fill="#00ffff" />
-        <!-- sonrisa -->
         <path
           d="M35 67 Q50 76 65 67"
           stroke="#00ffff"
           fill="none"
           stroke-width="0.8"
         />
-        <!-- triángulo de sabiduría -->
         <polygon
           points="50,15 42,25 58,25"
           stroke="#8b5cff"
@@ -241,15 +232,14 @@
       <div id="respuesta"></div>
     </div>
 
-    <!-- 🌐 Footer visible -->
     <footer>
       Creado por
-      <a href="https://github.com/adriancorro" target="_blank">Adrian Corro</a>
-      con ayuda de <span>OpenAI</span>
+      <a href="https://github.com/adriancorro" target="_blank">Adrián Corro</a>
+      con ayuda de <strong>OpenAI</strong>
     </footer>
 
     <script>
-      // 🔷 Fondo animado con meteorito
+      // 🌌 Fondo con líneas y meteorito
       const canvas = document.getElementById("bg");
       const ctx = canvas.getContext("2d");
       let lines = [];
@@ -300,7 +290,6 @@
         for (let i = 0; i < 120; i++) lines.push(new Line());
       }
 
-      // 🌠 Meteorito futurista
       function spawnMeteor() {
         meteor = {
           x: -50,
@@ -315,7 +304,6 @@
         if (!meteor) return;
         meteor.trail.push({ x: meteor.x, y: meteor.y });
         if (meteor.trail.length > 10) meteor.trail.shift();
-        ctx.beginPath();
         for (let i = 0; i < meteor.trail.length; i++) {
           const p = meteor.trail[i];
           ctx.fillStyle = `rgba(0,255,255,${i / meteor.trail.length})`;
@@ -344,46 +332,6 @@
 
       initLines();
       animate();
-
-      // 💬 Comunicación con backend
-      const sendBtn = document.getElementById("sendBtn");
-      const respuestaDiv = document.getElementById("respuesta");
-
-      sendBtn.onclick = async () => {
-        const userPrompt = document.getElementById("prompt").value.trim();
-        if (!userPrompt) {
-          respuestaDiv.textContent = "Por favor, escribe una pregunta.";
-          return;
-        }
-
-        respuestaDiv.textContent = "🌀 Consultando a Hegel IA...";
-
-        try {
-          let API_URL;
-          if (window.location.hostname.includes("localhost")) {
-            API_URL = "http://localhost:3000/api/route";
-          } else if (window.location.hostname.includes("hegel2052.com")) {
-            API_URL = "https://www.hegel2052.com/api/route";
-          } else {
-            API_URL = "https://hegel2052.vercel.app/api/route";
-          }
-
-          const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: userPrompt }),
-          });
-
-          const data = await response.json();
-          if (data.result) {
-            respuestaDiv.innerHTML = data.result;
-          } else {
-            respuestaDiv.textContent = "❌ Error en la respuesta del servidor.";
-          }
-        } catch (err) {
-          respuestaDiv.textContent = "⚠️ Error al conectar con el servidor.";
-        }
-      };
     </script>
   </body>
 </html>
