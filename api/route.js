@@ -81,7 +81,19 @@ export async function POST(req) {
     );
   }
 }
-
+//  Permitir también GET (para pruebas en navegador)
+export async function GET() {
+  return new Response(
+    JSON.stringify({ status: "API funcionando 🚀 Usa método POST para enviar prompts." }),
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      }
+    }
+  );
+}
 //  OPTIONS (preflight CORS)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
