@@ -1,8 +1,0 @@
-{
-  "name": "hegel2054",
-  "version": "1.0.0",
-  "type": "module",
-  "dependencies": {
-    "openai": "latest"
-  }
-}
