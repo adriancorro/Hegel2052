@@ -1,1 +1,197 @@
-<!DOCTYPE html><html><body><h1>Hegel 2054 OK</h1></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hegel 2054 — IA Filosófica</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Orbitron", sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0a0a0a, #000000 80%);
+            height: 100vh;
+            overflow: hidden;
+            color: #00eaff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Partículas futuristas */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -2;
+        }
+
+        .particles span {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00eaff;
+            animation: blink 3s infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* Triángulo neón */
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 180px solid transparent;
+            border-right: 180px solid transparent;
+            border-bottom: 300px solid rgba(0, 255, 255, 0.2);
+            position: absolute;
+            top: 10%;
+            animation: glow 3s infinite alternate ease-in-out;
+            filter: drop-shadow(0 0 25px #00eaff);
+            z-index: -1;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px #00eaff); transform: scale(1); }
+            to { filter: drop-shadow(0 0 40px #00eaff); transform: scale(1.05); }
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px #00eaff;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(0, 20, 30, 0.6);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #00eaff65;
+            box-shadow: 0 0 20px #00eaff30;
+            backdrop-filter: blur(8px);
+        }
+
+        textarea {
+            width: 100%;
+            height: 130px;
+            padding: 12px;
+            background: #001218;
+            border: 1px solid #00eaff80;
+            border-radius: 6px;
+            color: #00eaff;
+            font-size: 16px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background: linear-gradient(90deg, #00eaff, #006b80);
+            border: none;
+            border-radius: 8px;
+            color: black;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            text-shadow: 0 0 5px #ffffffaa;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+            transform: scale(1.03);
+        }
+
+        #respuesta {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 32, 40, 0.7);
+            border-left: 3px solid #00eaff;
+            border-radius: 6px;
+            color: #00eaff;
+            white-space: pre-wrap;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Partículas -->
+    <div class="particles">
+        <script>
+            for (let i = 0; i < 90; i++) {
+                const p = document.createElement("span");
+                p.style.top = Math.random() * 100 + "%";
+                p.style.left = Math.random() * 100 + "%";
+                p.style.animationDuration = (1 + Math.random() * 3) + "s";
+                document.querySelector(".particles").appendChild(p);
+            }
+        </script>
+    </div>
+
+    <!-- Triángulo -->
+    <div class="triangle"></div>
+
+    <h1>Hegel 2054 — IA Filosófica</h1>
+
+    <div class="container">
+        <textarea id="prompt" placeholder="Escribe tu pregunta para la IA de Hegel..."></textarea>
+        <button onclick="consultarHegel()">Preguntar a Hegel IA</button>
+        <div id="respuesta"></div>
+    </div>
+
+    <script>
+        function getAPI() {
+            const host = window.location.host;
+
+            if (host.includes("hegel2054.com")) {
+                return "https://hegel2054.com/api/hegel";
+            }
+
+            return "https://hegel2052.vercel.app/api/hegel";
+        }
+
+        async function consultarHegel() {
+            const prompt = document.getElementById("prompt").value.trim();
+            const respuesta = document.getElementById("respuesta");
+
+            if (!prompt) {
+                respuesta.textContent = "Por favor escribe una pregunta.";
+                return;
+            }
+
+            respuesta.textContent = "Consultando a Hegel IA…";
+
+            try {
+                const apiURL = getAPI();
+
+                const r = await fetch(apiURL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await r.json();
+                respuesta.textContent = data.result || "Error en la respuesta.";
+            } catch (e) {
+                respuesta.textContent = "❌ Error al conectar con el servidor.";
+            }
+        }
+    </script>
+
+</body>
+</html>
