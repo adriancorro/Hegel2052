@@ -18,7 +18,7 @@ function corsHeaders(origin) {
 
   return {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": allowed ? origin : "https://www.hegel2052.com",
+    "Access-Control-Allow-Origin": allowed ? origin : "hegel2052.com",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   };
