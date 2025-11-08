@@ -32,7 +32,8 @@ export async function POST(req) {
     }
 
     //  Cargar palabras clave dinámicamente (evita error de import)
-    const { palabrasClave } = await import("./keywords.js");
+    const module = await import(`${process.cwd()}/api/keywords.js`);
+    const { palabrasClave } = module;
 
     //  Comprobar si pregunta por el autor
     const lowerPrompt = prompt.toLowerCase();
