@@ -1,16 +1,37 @@
 import OpenAI from "openai";
 
+//  Lista de dominios permitidos
+const allowedOrigins = [
+  "https://www.hegel2052.com",
+  "https://hegel2052.com",
+  "https://hegel2052.vercel.app"
+];
+
+// Helper para manejar CORS dinámico
+function corsHeaders(origin) {
+  const isAllowed = allowedOrigins.includes(origin);
+  return {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": isAllowed ? origin : allowedOrigins[0],
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+  };
+}
+
+//  Endpoint principal (POST)
 export async function POST(req) {
   try {
+    const origin = req.headers.get("origin") || "";
     const { prompt } = await req.json();
 
     if (!prompt) {
-      return corsResponse({ error: "Falta el prompt" }, 400);
+      return new Response(
+        JSON.stringify({ error: "Falta el prompt" }),
+        { status: 400, headers: corsHeaders(origin) }
+      );
     }
 
-    const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
@@ -18,46 +39,31 @@ export async function POST(req) {
         {
           role: "system",
           content:
-            "Respóndeme como si fueras Hegel viviendo actualmente en este mundo, reflexionando sobre la sociedad moderna."
+            "Respóndeme como si fueras Hegel viviendo actualmente en este mundo, reflexionando sobre la sociedad moderna y la dialéctica del espíritu."
         },
-        {
-          role: "user",
-          content: prompt
-        }
+        { role: "user", content: prompt }
       ],
       temperature: 0.8,
-      max_tokens: 700
+      max_tokens: 800
     });
 
-    const respuesta =
-      completion.choices?.[0]?.message?.content || "No se recibió respuesta.";
+    const respuesta = completion.choices?.[0]?.message?.content || "Sin respuesta.";
 
-    return corsResponse({ result: respuesta }, 200);
+    return new Response(
+      JSON.stringify({ result: respuesta }),
+      { status: 200, headers: corsHeaders(origin) }
+    );
   } catch (error) {
     console.error("Error interno:", error);
-    return corsResponse({ error: "Error interno del servidor" }, 500);
+    return new Response(
+      JSON.stringify({ error: "Error interno del servidor" }),
+      { status: 500, headers: corsHeaders("") }
+    );
   }
 }
 
-// Función auxiliar para agregar CORS headers
-function corsResponse(body, status = 200) {
-  const headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "https://www.hegel2052.com",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type"
-  };
-  return new Response(JSON.stringify(body), { status, headers });
+// ✅ Responder al preflight OPTIONS (CORS)
+export async function OPTIONS(req) {
+  const origin = req.headers.get("origin") || "";
+  return new Response(null, { status: 204, headers: corsHeaders(origin) });
 }
-
-//  También responder a las peticiones "OPTIONS" (preflight)
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "https://www.hegel2052.com",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type"
-    }
-  });
-}.
