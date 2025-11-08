@@ -1,14 +1,14 @@
 import OpenAI from "openai";
-import { palabrasClave } from "./keywords.js"; // lista de variaciones
+import { palabrasClave } from "./keywords.js"; // lista de frases en inglés y español
 
-//  Dominios permitidos
+// 🌐 Dominios permitidos
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
   "https://hegel2052.vercel.app"
 ];
 
-//  Helper avanzado para CORS
+// ⚙️ Helper avanzado para CORS
 function corsHeaders(origin) {
   if (!origin) origin = "";
   const normalizedOrigin = origin.replace(/^https?:\/\//, "").replace(/^www\./, "");
@@ -18,12 +18,13 @@ function corsHeaders(origin) {
 
   return {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": allowed ? origin : "hegel2052.com",
+    "Access-Control-Allow-Origin": allowed ? origin : "https://www.hegel2052.com",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   };
+}
 
-//  Endpoint principal
+// 🧠 Endpoint principal (POST)
 export async function POST(req) {
   try {
     const origin = req.headers.get("origin") || "";
@@ -36,8 +37,9 @@ export async function POST(req) {
       });
     }
 
-    //  Verificar si pregunta por el autor
     const text = prompt.toLowerCase();
+
+    // 💡 Si pregunta por el autor o creación de la app
     const preguntaAutor = palabrasClave.some((frase) => text.includes(frase));
 
     if (preguntaAutor) {
@@ -49,7 +51,7 @@ export async function POST(req) {
       });
     }
 
-    //  Si no pregunta por el autor, responder como Hegel IA
+    // 🔮 Si no pregunta por el autor, responder como Hegel IA
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await client.chat.completions.create({
@@ -82,7 +84,7 @@ export async function POST(req) {
   }
 }
 
-//  OPTIONS (preflight CORS)
+// 🧩 OPTIONS (preflight CORS)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
