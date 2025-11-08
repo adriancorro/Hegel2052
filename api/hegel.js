@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { palabrasClave } from "./keywords.js"; 
+import { palabrasClave } from "/api/keywords.js"; 
 
 // 🌐 Lista de dominios permitidos
 const allowedOrigins = [
