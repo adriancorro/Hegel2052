@@ -123,7 +123,7 @@
       <h1>HEGEL 2052</h1>
       <p>Reflexión dialéctica del espíritu moderno</p>
 
-      <textarea id="prompt" placeholder="Escribe tu pregunta para Hegel IA..."></textarea>
+      <textarea id="prompt" placeholder="Conversa con Hegel, lo que quieras..."></textarea>
       <button id="sendBtn">Consultar</button>
       <div id="respuesta"></div>
     </div>
@@ -212,10 +212,10 @@
       sendBtn.addEventListener("click", async () => {
         const userPrompt = document.getElementById("prompt").value.trim();
         if (!userPrompt) {
-          respuestaDiv.textContent = "Por favor, escribe una pregunta.";
+          respuestaDiv.textContent = "Por favor, escribele a Hegel.";
           return;
         }
-        respuestaDiv.textContent = "🌀 Consultando a Hegel IA...";
+        respuestaDiv.textContent = "🌀 Consultando a Hegel...";
         try {
           let API_URL;
           if (window.location.hostname.includes("localhost")) {
@@ -235,11 +235,11 @@
             const isFromKeywords = data.result.includes("Adrián Corro");
             setTimeout(() => typeText(respuestaDiv, data.result, 10, isFromKeywords), 200);
           } else {
-            respuestaDiv.textContent = "❌ Error en la respuesta del servidor.";
+            respuestaDiv.textContent = " Error en la respuesta del servidor.";
           }
         } catch (err) {
           console.error(err);
-          respuestaDiv.textContent = "⚠️ Error al conectar con el servidor.";
+          respuestaDiv.textContent = " Error al conectar con el servidor.";
         }
       });
     </script>
