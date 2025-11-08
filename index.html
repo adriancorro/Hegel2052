@@ -20,6 +20,7 @@
         overflow-x: hidden;
       }
 
+      /* 🔧 Canvas de fondo — ahora sin bloquear clics */
       canvas {
         position: fixed;
         top: 0;
@@ -28,11 +29,12 @@
         height: 100%;
         z-index: 0;
         background: #000010;
+        pointer-events: none; /* 👈 clave: evita que bloquee los clics */
       }
 
       .container {
         position: relative;
-        z-index: 2;
+        z-index: 2; /* 👈 encima del canvas */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -63,6 +65,7 @@
         }
       }
 
+      /* 👁️ Rostro de Hegel */
       .hegel-face {
         width: 240px;
         height: 240px;
@@ -103,6 +106,7 @@
         outline: none;
         backdrop-filter: blur(8px);
         box-shadow: 0 0 15px #0077ff33;
+        z-index: 3;
       }
 
       button {
@@ -117,6 +121,7 @@
         cursor: pointer;
         box-shadow: 0 0 20px #00ffff;
         transition: transform 0.2s, box-shadow 0.3s;
+        z-index: 3;
       }
 
       button:hover {
@@ -138,9 +143,9 @@
         min-height: 120px;
         line-height: 1.5;
         box-shadow: 0 0 20px #00336688 inset;
+        z-index: 3;
       }
 
-      /* ✅ Footer ahora encima del canvas */
       footer {
         position: relative;
         z-index: 2;
@@ -189,6 +194,7 @@
     <canvas id="bg"></canvas>
 
     <div class="container">
+      <!-- SVG rostro de Hegel -->
       <svg
         class="hegel-face"
         viewBox="0 0 100 100"
@@ -239,7 +245,7 @@
     </footer>
 
     <script>
-      // 🌌 Fondo con líneas y meteorito
+      // 🔷 Fondo con líneas animadas
       const canvas = document.getElementById("bg");
       const ctx = canvas.getContext("2d");
       let lines = [];
@@ -290,35 +296,6 @@
         for (let i = 0; i < 120; i++) lines.push(new Line());
       }
 
-      function spawnMeteor() {
-        meteor = {
-          x: -50,
-          y: Math.random() * (canvas.height / 2),
-          speedX: Math.random() * 4 + 6,
-          speedY: Math.random() * 1 + 1,
-          trail: [],
-        };
-      }
-
-      function drawMeteor() {
-        if (!meteor) return;
-        meteor.trail.push({ x: meteor.x, y: meteor.y });
-        if (meteor.trail.length > 10) meteor.trail.shift();
-        for (let i = 0; i < meteor.trail.length; i++) {
-          const p = meteor.trail[i];
-          ctx.fillStyle = `rgba(0,255,255,${i / meteor.trail.length})`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        meteor.x += meteor.speedX;
-        meteor.y += meteor.speedY;
-        if (meteor.x > canvas.width + 50 || meteor.y > canvas.height + 50)
-          meteor = null;
-      }
-
-      setInterval(spawnMeteor, 8000);
-
       function animate() {
         ctx.fillStyle = "rgba(0, 0, 20, 0.25)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -326,12 +303,52 @@
           l.update();
           l.draw();
         });
-        drawMeteor();
         requestAnimationFrame(animate);
       }
 
       initLines();
       animate();
+
+      // 💬 Comunicación con backend
+      const sendBtn = document.getElementById("sendBtn");
+      const respuestaDiv = document.getElementById("respuesta");
+
+      sendBtn.addEventListener("click", async () => {
+        const userPrompt = document.getElementById("prompt").value.trim();
+        if (!userPrompt) {
+          respuestaDiv.textContent = "Por favor, escribe una pregunta.";
+          return;
+        }
+
+        respuestaDiv.textContent = "🌀 Consultando a Hegel IA...";
+
+        try {
+          let API_URL;
+          if (window.location.hostname.includes("localhost")) {
+            API_URL = "http://localhost:3000/api/route";
+          } else if (window.location.hostname.includes("hegel2052.com")) {
+            API_URL = "https://www.hegel2052.com/api/route";
+          } else {
+            API_URL = "https://hegel2052.vercel.app/api/route";
+          }
+
+          const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userPrompt }),
+          });
+
+          const data = await response.json();
+          if (data.result) {
+            respuestaDiv.innerHTML = data.result;
+          } else {
+            respuestaDiv.textContent = "❌ Error en la respuesta del servidor.";
+          }
+        } catch (err) {
+          console.error(err);
+          respuestaDiv.textContent = "⚠️ Error al conectar con el servidor.";
+        }
+      });
     </script>
   </body>
 </html>
