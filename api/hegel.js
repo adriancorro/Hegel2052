@@ -1,14 +1,13 @@
 import OpenAI from "openai";
-import { palabrasClave } from "./keywords.js"; //  import ajustado al mismo nivel
 
-//  Lista de dominios permitidos
+// 🌐 Lista de dominios permitidos
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
   "https://hegel2052.vercel.app"
 ];
 
-//  Helper CORS
+// 🛡️ Helper CORS
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
   return {
@@ -32,7 +31,10 @@ export async function POST(req) {
       });
     }
 
-    //  Comprobar si pregunta por el autor
+    // ✅ Cargar palabras clave dinámicamente (evita error de import)
+    const { palabrasClave } = await import("./keywords.js");
+
+    // 🧩 Comprobar si pregunta por el autor
     const lowerPrompt = prompt.toLowerCase();
     const preguntaAutor = palabrasClave.some((frase) =>
       lowerPrompt.includes(frase)
@@ -47,7 +49,7 @@ export async function POST(req) {
       });
     }
 
-    //  Si no pregunta por el autor, usar OpenAI
+    // 🧠 Si no pregunta por el autor, usar OpenAI
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await client.chat.completions.create({
@@ -80,7 +82,7 @@ export async function POST(req) {
   }
 }
 
-//  OPTIONS (preflight CORS)
+// ✅ OPTIONS (preflight CORS)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
