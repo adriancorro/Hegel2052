@@ -1,8 +1,11 @@
 {
-  "name": "hegel2054",
+  "name": "hegel2052-api",
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
     "openai": "latest"
+  },
+  "scripts": {
+    "start": "node api/hegel/route.js"
   }
 }
