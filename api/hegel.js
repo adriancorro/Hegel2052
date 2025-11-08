@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { palabrasClave } from "./keywords.js"; // ✅ Ruta corregida para Vercel
+import { palabrasClave } from "keywords.js"; // 
 
 // 🌐 Lista de dominios permitidos
 const allowedOrigins = [
