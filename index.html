@@ -20,7 +20,6 @@
         overflow-x: hidden;
       }
 
-      /* 🔧 Canvas de fondo — ahora sin bloquear clics */
       canvas {
         position: fixed;
         top: 0;
@@ -29,12 +28,12 @@
         height: 100%;
         z-index: 0;
         background: #000010;
-        pointer-events: none; /* 👈 clave: evita que bloquee los clics */
+        pointer-events: none;
       }
 
       .container {
         position: relative;
-        z-index: 2; /* 👈 encima del canvas */
+        z-index: 2;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -65,7 +64,6 @@
         }
       }
 
-      /* 👁️ Rostro de Hegel */
       .hegel-face {
         width: 240px;
         height: 240px;
@@ -146,6 +144,25 @@
         z-index: 3;
       }
 
+      /* 💡 Cursor animado tipo chat */
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 1em;
+        background-color: #00ffff;
+        margin-left: 3px;
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%, 50%, 100% {
+          opacity: 1;
+        }
+        25%, 75% {
+          opacity: 0;
+        }
+      }
+
       footer {
         position: relative;
         z-index: 2;
@@ -194,7 +211,6 @@
     <canvas id="bg"></canvas>
 
     <div class="container">
-      <!-- SVG rostro de Hegel -->
       <svg
         class="hegel-face"
         viewBox="0 0 100 100"
@@ -249,7 +265,6 @@
       const canvas = document.getElementById("bg");
       const ctx = canvas.getContext("2d");
       let lines = [];
-      let meteor = null;
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -309,9 +324,30 @@
       initLines();
       animate();
 
-      // 💬 Comunicación con backend
+      // 💬 Comunicación con backend + efecto de escritura suave
       const sendBtn = document.getElementById("sendBtn");
       const respuestaDiv = document.getElementById("respuesta");
+
+      // ✨ Escribir texto suavemente con cursor parpadeante
+      function typeText(element, text, speed = 25) {
+        element.innerHTML = "";
+        let i = 0;
+        const cursor = document.createElement("span");
+        cursor.classList.add("cursor");
+        element.appendChild(cursor);
+
+        const interval = setInterval(() => {
+          element.insertBefore(
+            document.createTextNode(text.charAt(i)),
+            cursor
+          );
+          i++;
+          if (i >= text.length) {
+            clearInterval(interval);
+            cursor.remove();
+          }
+        }, speed);
+      }
 
       sendBtn.addEventListener("click", async () => {
         const userPrompt = document.getElementById("prompt").value.trim();
@@ -340,7 +376,7 @@
 
           const data = await response.json();
           if (data.result) {
-            respuestaDiv.innerHTML = data.result;
+            setTimeout(() => typeText(respuestaDiv, data.result, 25), 400);
           } else {
             respuestaDiv.textContent = "❌ Error en la respuesta del servidor.";
           }
