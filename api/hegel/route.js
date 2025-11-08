@@ -1,13 +1,13 @@
 import OpenAI from "openai";
 
-//  Lista de dominios permitidos
+// ✅ Lista de dominios permitidos (tu web y Vercel)
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
   "https://hegel2052.vercel.app"
 ];
 
-// Helper para manejar CORS dinámico
+// ✅ Helper para CORS dinámico
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
   return {
@@ -18,7 +18,7 @@ function corsHeaders(origin) {
   };
 }
 
-//  Endpoint principal (POST)
+// ✅ Endpoint principal — POST
 export async function POST(req) {
   try {
     const origin = req.headers.get("origin") || "";
@@ -39,7 +39,7 @@ export async function POST(req) {
         {
           role: "system",
           content:
-            "Respóndeme como si fueras Hegel viviendo actualmente en este mundo, reflexionando sobre la sociedad moderna y la dialéctica del espíritu."
+            "Respóndeme como si fueras Hegel viviendo actualmente en este mundo moderno, reflexionando sobre la sociedad contemporánea y la dialéctica del espíritu."
         },
         { role: "user", content: prompt }
       ],
@@ -47,12 +47,14 @@ export async function POST(req) {
       max_tokens: 800
     });
 
-    const respuesta = completion.choices?.[0]?.message?.content || "Sin respuesta.";
+    const respuesta =
+      completion.choices?.[0]?.message?.content || "Sin respuesta generada.";
 
     return new Response(
       JSON.stringify({ result: respuesta }),
       { status: 200, headers: corsHeaders(origin) }
     );
+
   } catch (error) {
     console.error("Error interno:", error);
     return new Response(
@@ -62,7 +64,7 @@ export async function POST(req) {
   }
 }
 
-// ✅ Responder al preflight OPTIONS (CORS)
+// ✅ Responder a preflight (OPTIONS)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
