@@ -6,6 +6,6 @@
     "openai": "latest"
   },
   "scripts": {
-    "start": "node api/hegel.js"
+    "start": "node api/route.js"
   }
 }
