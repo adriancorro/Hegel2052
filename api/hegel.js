@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { palabrasClave } from "./keywords.js"; // 🔗 Importa el archivo externo
+import { palabrasClave } from "./keywords.js"; // lista de variaciones
 
 //  Dominios permitidos
 const allowedOrigins = [
@@ -8,16 +8,23 @@ const allowedOrigins = [
   "https://hegel2052.vercel.app"
 ];
 
+//  Helper avanzado para CORS
 function corsHeaders(origin) {
-  const isAllowed = allowedOrigins.includes(origin);
+  if (!origin) origin = "";
+  const normalizedOrigin = origin.replace(/^https?:\/\//, "").replace(/^www\./, "");
+  const allowed = allowedOrigins.some((o) =>
+    o.replace(/^https?:\/\//, "").replace(/^www\./, "") === normalizedOrigin
+  );
+
   return {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": isAllowed ? origin : allowedOrigins[0],
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Origin": allowed ? origin : "https://www.hegel2052.com",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   };
 }
 
+//  Endpoint principal
 export async function POST(req) {
   try {
     const origin = req.headers.get("origin") || "";
@@ -30,7 +37,7 @@ export async function POST(req) {
       });
     }
 
-    //  Verificar si la pregunta coincide con alguna palabra clave
+    //  Verificar si pregunta por el autor
     const text = prompt.toLowerCase();
     const preguntaAutor = palabrasClave.some((frase) => text.includes(frase));
 
@@ -43,7 +50,7 @@ export async function POST(req) {
       });
     }
 
-    //  Si no es pregunta del autor → responder como Hegel
+    //  Si no pregunta por el autor, responder como Hegel IA
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await client.chat.completions.create({
@@ -76,6 +83,7 @@ export async function POST(req) {
   }
 }
 
+//  OPTIONS (preflight CORS)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
