@@ -244,8 +244,8 @@
 
         respuestaDiv.textContent = "🌀 Consultando a Hegel IA...";
 
-        try {
-          const response = await fetch("https://www.hegel2052.com/api/hegel", {
+        try {  
+          const response = await fetch("https://hegel2052.vercel.app/api/hegel", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: userPrompt }),
