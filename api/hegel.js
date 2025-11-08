@@ -1,13 +1,13 @@
 import OpenAI from "openai";
+import { palabrasClave } from "./keywords.js"; // 🔗 Importa el archivo externo
 
-//  Lista de dominios permitidos
+//  Dominios permitidos
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
   "https://hegel2052.vercel.app"
 ];
 
-//  Helper para CORS dinámico
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
   return {
@@ -18,7 +18,6 @@ function corsHeaders(origin) {
   };
 }
 
-//  Endpoint principal
 export async function POST(req) {
   try {
     const origin = req.headers.get("origin") || "";
@@ -31,53 +30,8 @@ export async function POST(req) {
       });
     }
 
-    // 🧠 Comprobación de autor (palabras clave en español e inglés)
+    //  Verificar si la pregunta coincide con alguna palabra clave
     const text = prompt.toLowerCase();
-
-    const palabrasClave = [
-      // Español
-      "quien hizo esta app",
-      "quién hizo esta app",
-      "quien hizo esta aplicacion",
-      "quien creo esta app",
-      "quien creó esta app",
-      "quien desarrollo esta app",
-      "quien desarrolló esta app",
-      "quien programo esta app",
-      "quien programó esta app",
-      "quien diseño esta app",
-      "como se creo esta app",
-      "como se creó esta app",
-      "como se hizo esta app",
-      "como se desarrollo esta app",
-      "como se desarrolló esta app",
-      "como se programo esta app",
-      "como se programó esta app",
-      "como se construyo esta app",
-      "como se construyó esta app",
-      "quien hizo esta web",
-      "quien hizo esta página",
-      "quien desarrollo esta web",
-      "quien desarrolló esta página",
-      "como se creó esta web",
-      "como se desarrollo esta web",
-      // Inglés
-      "who created this app",
-      "who made this app",
-      "who built this app",
-      "who designed this app",
-      "who developed this app",
-      "how was this app created",
-      "how was this app built",
-      "how was this app made",
-      "who created this website",
-      "who made this website",
-      "who developed this website",
-      "who built this website",
-      "how was this website created",
-      "how was this website built"
-    ];
-
     const preguntaAutor = palabrasClave.some((frase) => text.includes(frase));
 
     if (preguntaAutor) {
@@ -89,7 +43,7 @@ export async function POST(req) {
       });
     }
 
-    //  Si no pregunta por el autor, continuar con la respuesta normal de Hegel
+    //  Si no es pregunta del autor → responder como Hegel
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await client.chat.completions.create({
@@ -122,7 +76,6 @@ export async function POST(req) {
   }
 }
 
-//  Preflight OPTIONS
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
