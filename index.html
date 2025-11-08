@@ -1,169 +1,164 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HEGEL 2052 — Filosofía Sintética</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hegel 2052</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap");
+      body {
+        margin: 0;
+        font-family: "Orbitron", sans-serif;
+        background: radial-gradient(circle at center, #050505 0%, #000000 80%);
+        color: #00ffff;
+        overflow-x: hidden;
+      }
 
-<style>
-:root {
-  --neon1:#00eaff;
-  --neon2:#ff00ff;
-  --bg:#020510;
-  --text:#cfffff;
-}
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  background:radial-gradient(circle at 30% 50%,#050d1f,#01020a 90%);
-  color:var(--text);
-  font-family:'Share Tech Mono',monospace;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-.bg{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:-1;}
-.bg span{position:absolute;width:2px;height:2px;background:var(--neon1);opacity:.4;animation:blink 3s infinite ease-in-out;}
-@keyframes blink{0%,100%{opacity:.2;transform:translateY(0);}50%{opacity:1;transform:translateY(-10px);}}
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        padding: 20px;
+        text-align: center;
+      }
 
-.container{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
-.face{width:180px;height:180px;margin-top:40px;stroke:var(--neon1);stroke-width:1.5;fill:none;filter:drop-shadow(0 0 10px var(--neon1));animation:pulse 4s infinite alternate ease-in-out;}
-@keyframes pulse{from{opacity:.8;transform:scale(1);}to{opacity:1;transform:scale(1.05);}}
-h1{font-family:'Orbitron',sans-serif;font-size:2rem;margin-top:20px;color:var(--neon1);text-shadow:0 0 10px var(--neon1);letter-spacing:2px;}
-p.sub{margin-top:6px;color:#88ffff;font-size:.9rem;text-shadow:0 0 5px var(--neon1);}
-.panel{margin-top:30px;max-width:600px;width:90%;background:rgba(0,15,30,.7);border:1px solid rgba(0,255,255,.2);box-shadow:0 0 20px rgba(0,255,255,.2);border-radius:12px;padding:20px;backdrop-filter:blur(8px);}
-textarea{width:100%;height:130px;padding:12px;background:rgba(0,0,0,.6);border:1px solid var(--neon1);color:var(--text);font-size:15px;border-radius:8px;resize:none;}
-button{margin-top:12px;width:100%;padding:12px;font-size:16px;border:none;border-radius:8px;cursor:pointer;font-family:'Orbitron';background:linear-gradient(90deg,var(--neon1),var(--neon2));color:#000;text-shadow:0 0 8px #fff;transition:all .2s ease;}
-button:hover{transform:scale(1.03);filter:brightness(1.2);}
-#respuesta{margin-top:18px;background:rgba(0,30,40,.8);border-left:3px solid var(--neon1);padding:12px;border-radius:6px;text-align:left;font-size:14px;white-space:pre-wrap;}
+      h1 {
+        font-size: 2.4em;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        animation: glow 2s infinite alternate;
+      }
 
-/* --- Consola de depuración --- */
-#debug{
-  position:fixed;bottom:10px;left:10px;width:90%;max-width:600px;
-  background:rgba(0,10,20,.85);
-  border:1px solid var(--neon1);
-  border-radius:8px;
-  font-family:monospace;
-  color:#0ff;
-  font-size:11px;
-  padding:8px;
-  height:120px;
-  overflow:auto;
-  z-index:9999;
-  text-shadow:0 0 4px #00eaff;
-}
-#debug b{color:#ff00ff;}
-@media(max-width:600px){
-  h1{font-size:1.4rem;}
-  .face{width:130px;height:130px;}
-  .panel{padding:15px;}
-  #debug{height:100px;font-size:10px;}
-}
-</style>
-</head>
-<body>
-<div class="bg"></div>
+      @keyframes glow {
+        from {
+          text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        }
+        to {
+          text-shadow: 0 0 25px #00bfff, 0 0 40px #00bfff;
+        }
+      }
 
-<div class="container">
-  <!-- Rostro futurista de Hegel -->
-  <svg class="face" viewBox="0 0 200 200">
-    <path d="M100 20 C150 30 170 80 160 130 C155 155 135 180 100 180 C65 180 45 155 40 130 C30 80 50 30 100 20 Z
-             M70 90 Q100 110 130 90
-             M70 90 Q100 70 130 90
-             M85 65 Q100 55 115 65
-             M90 125 Q100 135 110 125" />
-  </svg>
+      textarea {
+        width: 90%;
+        max-width: 500px;
+        height: 120px;
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #00ffff;
+        color: #00ffff;
+        font-size: 16px;
+        border-radius: 10px;
+        padding: 10px;
+        resize: none;
+        outline: none;
+      }
 
-  <h1>HEGEL 2052</h1>
-  <p class="sub">Una inteligencia creada a partir del pensamiento dialéctico</p>
+      button {
+        margin-top: 15px;
+        background: linear-gradient(90deg, #00ffff, #0077ff);
+        color: black;
+        border: none;
+        font-weight: bold;
+        font-size: 16px;
+        padding: 12px 30px;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 0 10px #00ffff;
+        transition: transform 0.2s;
+      }
 
-  <div class="panel">
-    <textarea id="prompt" placeholder="Escribe tu pregunta para la IA de Hegel..."></textarea>
-    <button onclick="consultarHegel()">Preguntar</button>
-    <div id="respuesta">Esperando tu pensamiento...</div>
-  </div>
-</div>
+      button:hover {
+        transform: scale(1.05);
+      }
 
-<div id="debug">🧠 <b>Debug:</b> Iniciando monitor de red...</div>
+      #respuesta {
+        margin-top: 30px;
+        width: 90%;
+        max-width: 600px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #00ffff;
+        white-space: pre-wrap;
+        font-size: 1.1em;
+        text-shadow: 0 0 8px #00ffff;
+        min-height: 100px;
+      }
 
-<script>
-// --- partículas de fondo ---
-const bg = document.querySelector('.bg');
-for(let i=0;i<80;i++){
-  const s=document.createElement('span');
-  s.style.left=Math.random()*100+'%';
-  s.style.top=Math.random()*100+'%';
-  s.style.animationDuration=(1+Math.random()*3)+'s';
-  bg.appendChild(s);
-}
+      .triangle {
+        position: fixed;
+        width: 200px;
+        height: 200px;
+        border: 2px solid #00ffff;
+        clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        animation: rotate 8s linear infinite;
+        opacity: 0.15;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
 
-// --- Función utilitaria para registrar mensajes en la consola visible ---
-function logDebug(msg){
-  const dbg=document.getElementById('debug');
-  const time=new Date().toLocaleTimeString();
-  dbg.textContent += `\\n[${time}] ${msg}`;
-  dbg.scrollTop=dbg.scrollHeight;
-}
+      @keyframes rotate {
+        from {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
 
-// --- Selección automática de API ---
-function getAPI(){
-  const host=window.location.host;
-  if(host.includes("vercel.app")) return "https://hegel2052.vercel.app/api/hegel";
-  if(host.includes("hegel2052.com")) return "https://hegel2052.com/api/hegel";
-  return window.location.origin+"/api/hegel";
-}
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.8em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="triangle"></div>
+    <div class="container">
+      <h1>HEGEL 2052</h1>
+      <p>Una inteligencia creada a partir del pensamiento dialéctico</p>
+      <textarea
+        id="prompt"
+        placeholder="Escribe tu pregunta para Hegel IA..."
+      ></textarea>
+      <button id="sendBtn">Preguntar</button>
+      <div id="respuesta"></div>
+    </div>
 
-// --- Función principal ---
-async function consultarHegel(){
-  const prompt=document.getElementById('prompt').value.trim();
-  const respuesta=document.getElementById('respuesta');
-  const api=getAPI();
+    <script>
+      const sendBtn = document.getElementById("sendBtn");
+      const respuestaDiv = document.getElementById("respuesta");
 
-  if(!prompt){respuesta.textContent="Por favor, escribe una pregunta.";return;}
+      sendBtn.onclick = async () => {
+        const userPrompt = document.getElementById("prompt").value.trim();
+        if (!userPrompt) {
+          respuestaDiv.textContent = "Por favor, escribe una pregunta.";
+          return;
+        }
 
-  respuesta.textContent="🧠 Consultando al sistema Hegeliano...";
-  logDebug(`POST ${api}`);
+        respuestaDiv.textContent = "🌀 Consultando a Hegel IA...";
+        try {
+          const response = await fetch("https://www.hegel2052.com/api/hegel", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userPrompt }),
+          });
 
-  try{
-    const res=await fetch(api,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({prompt})
-    });
-
-    logDebug(`→ HTTP ${res.status}`);
-    const text=await res.text();
-    logDebug(`→ Respuesta: ${text.slice(0,200)}...`);
-
-    try{
-      const data=JSON.parse(text);
-      respuesta.textContent=data.result||data.error||"Error desconocido.";
-    }catch(e){
-      respuesta.textContent="⚠️ Error interpretando la respuesta.";
-    }
-
-  }catch(err){
-    logDebug(`❌ Network Error: ${err.message}`);
-    respuesta.textContent="❌ Error al conectar con el servidor.";
-  }
-}
-
-// --- Prueba automática de endpoints ---
-(async()=>{
-  const endpoints=[
-    "https://www.hegel2052.com/api/hegel",
-    "https://hegel2052.com/api/hegel",
-    "https://hegel2052.vercel.app/api/hegel"
-  ];
-  for(const url of endpoints){
-    try{
-      const res=await fetch(url,{method:"OPTIONS"});
-      logDebug(`Test ${url} → ${res.status}`);
-    }catch(e){
-      logDebug(`Test ${url} ❌ ${e.message}`);
-    }
-  }
-})();
-</script>
-</body>
+          const data = await response.json();
+          if (data.result) {
+            respuestaDiv.innerHTML = data.result;
+          } else {
+            respuestaDiv.textContent =
+              "❌ Error en la respuesta del servidor.";
+          }
+        } catch (err) {
+          respuestaDiv.textContent = "⚠️ Error al conectar con el servidor.";
+        }
+      };
+    </script>
+  </body>
 </html>
