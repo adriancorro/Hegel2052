@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-// 🌍 Lista de dominios permitidos
+// Lista de dominios permitidos
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
@@ -9,7 +9,7 @@ const allowedOrigins = [
   "http://127.0.0.1:3000"
 ];
 
-// 🧩 Helper CORS
+//  Helper CORS
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
   return {
@@ -18,6 +18,14 @@ function corsHeaders(origin) {
     "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
     "Access-Control-Allow-Headers": "Content-Type"
   };
+}
+
+//  Normalizador de texto universal
+function normalizeText(text) {
+  return text
+    .toLowerCase() // pasa todo a minúsculas
+    .normalize("NFD") // separa letras y tildes
+    .replace(/[\u0300-\u036f]/g, ""); // elimina las tildes
 }
 
 //  Endpoint principal (POST)
@@ -36,15 +44,22 @@ export async function POST(req) {
     //  Cargar palabras clave dinámicamente
     const { palabrasClave } = await import(`${process.cwd()}/api/keywords.js`);
 
-    //  Verificar si la pregunta es sobre el autor
-    const lowerPrompt = prompt.toLowerCase();
-    const preguntaAutor = palabrasClave.some((frase) =>
-      lowerPrompt.includes(frase)
+    //  Preprocesar todas las palabras clave solo una vez (más eficiente)
+    const normalizedKeywords = palabrasClave.map((frase) =>
+      normalizeText(frase)
+    );
+
+    //  Normalizar también el texto del usuario
+    const normalizedPrompt = normalizeText(prompt);
+
+    //  Verificar coincidencia sin importar acentos o mayúsculas
+    const preguntaAutor = normalizedKeywords.some((frase) =>
+      normalizedPrompt.includes(frase)
     );
 
     if (preguntaAutor) {
       const respuestaAutor =
-        "Esta aplicación fue creada por **Adrián** (GitHub: https://github.com/adriancorro) con la tecnología de **ChatGPT (OpenAI)**.";
+        "Esta aplicación fue creada por **Adrián Corro** (GitHub: [https://github.com/adriancorro](https://github.com/adriancorro)) con la tecnología de **OpenAI (ChatGPT)**.";
       return new Response(JSON.stringify({ result: respuestaAutor }), {
         status: 200,
         headers: corsHeaders(origin)
@@ -54,7 +69,7 @@ export async function POST(req) {
     //  Inicializar cliente OpenAI
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // 🗣️ Generar respuesta
+    //  Generar respuesta de Hegel IA
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -89,11 +104,11 @@ export async function POST(req) {
   }
 }
 
-//  Endpoint GET (para pruebas rápidas)
+//  Endpoint GET (para pruebas)
 export async function GET() {
   return new Response(
     JSON.stringify({
-      status: "✅ API funcionando. Usa método POST para enviar prompts."
+      status: "✅ API funcionando correctamente. Usa POST para enviar prompts."
     }),
     {
       status: 200,
