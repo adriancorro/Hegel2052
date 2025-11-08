@@ -18,7 +18,7 @@ function corsHeaders(origin) {
 
   return {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": isAllowed ? origin : allowedOrigins[0],
+    "Access-Control-Allow-Origin": allowed ? origin : "https://hegel2052.vercel.app",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type"
   };
