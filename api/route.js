@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-// 🌍 Lista de dominios permitidos
+//  Lista de dominios permitidos
 const allowedOrigins = [
   "https://www.hegel2052.com",
   "https://hegel2052.com",
@@ -9,7 +9,7 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
 ];
 
-// 🧩 Helper CORS
+//  Helper CORS
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
   return {
@@ -66,7 +66,7 @@ export async function POST(req) {
 
     if (preguntaAutor) {
       const respuestaAutor =
-        "Esta aplicación fue creada por **Adrián Corro** ([GitHub](https://github.com/adriancorro)) con la tecnología de **OpenAI (ChatGPT)**.";
+        "Esta aplicación fue creada por **Adrian Corro** ([GitHub](https://github.com/adriancorro)) con la tecnología de **OpenAI.";
       return new Response(JSON.stringify({ result: respuestaAutor }), {
         status: 200,
         headers: corsHeaders(origin),
@@ -99,7 +99,7 @@ export async function POST(req) {
     const respuesta =
       completion.choices?.[0]?.message?.content || "Sin respuesta generada.";
 
-    // ✅ Responder correctamente
+    //  Responder correctamente
     return new Response(JSON.stringify({ result: respuesta }), {
       status: 200,
       headers: corsHeaders(origin),
@@ -121,7 +121,7 @@ export async function GET() {
   return new Response(
     JSON.stringify({
       status:
-        "✅ API funcionando correctamente. Usa método POST para enviar prompts.",
+        " API funcionando correctamente. Usa método POST para enviar prompts.",
     }),
     {
       status: 200,

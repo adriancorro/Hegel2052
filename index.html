@@ -134,15 +134,11 @@
     </footer>
 
     <script>
-      // Fondo con líneas animadas
+      // === Fondo animado ===
       const canvas = document.getElementById("bg");
       const ctx = canvas.getContext("2d");
       let lines = [];
-
-      function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
+      function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
       window.addEventListener("resize", resize);
       resize();
 
@@ -167,24 +163,20 @@
           const y2 = this.y + Math.sin(this.angle) * this.length;
           ctx.strokeStyle = "rgba(0,255,255,0.08)";
           ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(x2, y2); ctx.stroke();
         }
       }
 
-      function initLines() { lines = []; for (let i = 0; i < 120; i++) lines.push(new Line()); }
+      function initLines() { for (let i = 0; i < 120; i++) lines.push(new Line()); }
       function animate() {
         ctx.fillStyle = "rgba(0, 0, 20, 0.25)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        lines.forEach((l) => { l.update(); l.draw(); });
+        lines.forEach(l => { l.update(); l.draw(); });
         requestAnimationFrame(animate);
       }
-      initLines();
-      animate();
+      initLines(); animate();
 
-      // 💬 Comunicación + escritura rápida
+      // === Comunicación con API ===
       const sendBtn = document.getElementById("sendBtn");
       const respuestaDiv = document.getElementById("respuesta");
 
@@ -194,13 +186,11 @@
         const cursor = document.createElement("span");
         cursor.classList.add("cursor");
         element.appendChild(cursor);
-
         const interval = setInterval(() => {
           element.insertBefore(document.createTextNode(text.charAt(i)), cursor);
           i++;
           if (i >= text.length) {
-            clearInterval(interval);
-            cursor.remove();
+            clearInterval(interval); cursor.remove();
             if (applyGlow) {
               element.classList.add("neon-flash");
               setTimeout(() => element.classList.remove("neon-flash"), 2500);
@@ -211,37 +201,78 @@
 
       sendBtn.addEventListener("click", async () => {
         const userPrompt = document.getElementById("prompt").value.trim();
-        if (!userPrompt) {
-          respuestaDiv.textContent = "Por favor, escribele a Hegel.";
-          return;
-        }
+        if (!userPrompt) { respuestaDiv.textContent = "Por favor, escribele a Hegel."; return; }
         respuestaDiv.textContent = "🌀 Consultando a Hegel...";
         try {
-          let API_URL;
-          if (window.location.hostname.includes("localhost")) {
-            API_URL = "http://localhost:3000/api/route";
-          } else if (window.location.hostname.includes("hegel2052.com")) {
-            API_URL = "https://www.hegel2052.com/api/route";
-          } else {
-            API_URL = "https://hegel2052.vercel.app/api/route";
-          }
-          const response = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+          let API_URL =
+            window.location.hostname.includes("localhost")
+              ? "http://localhost:3000/api/route"
+              : window.location.hostname.includes("hegel2052.com")
+              ? "https://www.hegel2052.com/api/route"
+              : "https://hegel2052.vercel.app/api/route";
+
+          const res = await fetch(API_URL, {
+            method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: userPrompt }),
           });
-          const data = await response.json();
+          const data = await res.json();
           if (data.result) {
             const isFromKeywords = data.result.includes("Adrián Corro");
-            setTimeout(() => typeText(respuestaDiv, data.result, 10, isFromKeywords), 200);
-          } else {
-            respuestaDiv.textContent = " Error en la respuesta del servidor.";
-          }
-        } catch (err) {
-          console.error(err);
-          respuestaDiv.textContent = " Error al conectar con el servidor.";
+            if (isFromKeywords) typeText(respuestaDiv, data.result, 10, true);
+            else respuestaDiv.textContent = data.result;
+          } else respuestaDiv.textContent = " Error en la respuesta del servidor.";
+        } catch (e) {
+          console.error(e); respuestaDiv.textContent = " Error al conectar con el servidor.";
         }
       });
+
+      // === Meteorito 777 futurista ===
+      const meteorCanvas = document.createElement("canvas");
+      meteorCanvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;";
+      document.body.appendChild(meteorCanvas);
+      const mctx = meteorCanvas.getContext("2d");
+
+      function resizeMeteor() {
+        meteorCanvas.width = innerWidth;
+        meteorCanvas.height = innerHeight;
+      }
+      window.addEventListener("resize", resizeMeteor);
+      resizeMeteor();
+
+      function drawMeteor() {
+        const startX = -100;
+        const startY = Math.random() * innerHeight * 0.5;
+        const endX = innerWidth + 100;
+        const endY = startY + 200;
+        const duration = 2000;
+        const trail = [];
+
+        const startTime = performance.now();
+        function animateMeteor(t) {
+          const elapsed = t - startTime;
+          const progress = elapsed / duration;
+          if (progress > 1) return;
+          const x = startX + (endX - startX) * progress;
+          const y = startY + (endY - startY) * progress;
+          trail.push({ x, y });
+          if (trail.length > 30) trail.shift();
+          mctx.clearRect(0, 0, meteorCanvas.width, meteorCanvas.height);
+          // trail glow
+          for (let i = 0; i < trail.length; i++) {
+            const alpha = i / trail.length;
+            mctx.save();
+            mctx.font = "bold 24px Orbitron";
+            mctx.fillStyle = `rgba(0,255,255,${alpha * 0.7})`;
+            mctx.shadowColor = "#8b5cff";
+            mctx.shadowBlur = 15;
+            mctx.fillText("777", trail[i].x, trail[i].y);
+            mctx.restore();
+          }
+          requestAnimationFrame(animateMeteor);
+        }
+        requestAnimationFrame(animateMeteor);
+      }
+      setInterval(drawMeteor, 7000);
     </script>
   </body>
 </html>
