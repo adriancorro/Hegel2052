@@ -20,7 +20,7 @@ function corsHeaders(origin) {
   };
 }
 
-// 🔤 Normalizador universal (quita tildes, mayúsculas, etc.)
+//  Normalizador universal (quita tildes, mayúsculas, etc.)
 function normalizeText(text) {
   return text
     .toLowerCase()
@@ -28,7 +28,7 @@ function normalizeText(text) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-// 🌐 Detección básica del idioma del prompt
+//  Detección básica del idioma del prompt
 function detectLanguage(text) {
   const englishRegex = /[a-z]/;
   const spanishWords = ["que", "como", "quien", "donde", "por", "cuando", "app", "pagina", "inteligencia"];
@@ -39,7 +39,7 @@ function detectLanguage(text) {
   return isEnglish ? "en" : "es";
 }
 
-// 🚀 Endpoint principal (POST)
+//  Endpoint principal (POST)
 export async function POST(req) {
   try {
     const origin = req.headers.get("origin") || "";
@@ -52,14 +52,14 @@ export async function POST(req) {
       });
     }
 
-    // 🧠 Cargar palabras clave dinámicamente
+    //  Cargar palabras clave dinámicamente
     const { palabrasClave } = await import(`${process.cwd()}/api/keywords.js`);
 
-    // 🔤 Normalizar todas las palabras clave
+    //  Normalizar todas las palabras clave
     const normalizedKeywords = palabrasClave.map((f) => normalizeText(f));
     const normalizedPrompt = normalizeText(prompt);
 
-    // 🔍 Detectar si pregunta por el autor
+    //  Detectar si pregunta por el autor
     const preguntaAutor = normalizedKeywords.some((frase) =>
       normalizedPrompt.includes(frase)
     );
@@ -73,19 +73,19 @@ export async function POST(req) {
       });
     }
 
-    // 🌐 Detectar idioma del usuario
+    //  Detectar idioma del usuario
     const idioma = detectLanguage(prompt);
 
-    // 🤖 Inicializar cliente OpenAI
+    //  Inicializar cliente OpenAI
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // 🗣️ Configurar prompt base según idioma
+    //  Configurar prompt base según idioma
     const systemMessage =
       idioma === "es"
         ? "Respóndeme como si fueras Hegel viviendo en el siglo XXI, reflexionando sobre la sociedad contemporánea y la dialéctica del espíritu. Responde en español, con profundidad y elegancia filosófica."
         : "Answer as if you were Hegel living in the 21st century, reflecting on contemporary society and the dialectic of spirit. Respond in English, with philosophical depth and clarity.";
 
-    // 📡 Llamada a la API de OpenAI
+    //  Llamada a la API de OpenAI
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -105,7 +105,7 @@ export async function POST(req) {
       headers: corsHeaders(origin),
     });
   } catch (error) {
-    console.error("🛑 Error interno en /api/route:", error);
+    console.error(" Error interno en /api/route:", error);
     return new Response(
       JSON.stringify({
         error: "Error interno del servidor",
@@ -116,7 +116,7 @@ export async function POST(req) {
   }
 }
 
-// 🌐 GET (prueba)
+//  GET (prueba)
 export async function GET() {
   return new Response(
     JSON.stringify({
@@ -133,7 +133,7 @@ export async function GET() {
   );
 }
 
-// 🧾 OPTIONS (CORS preflight)
+//  OPTIONS (CORS preflight)
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
