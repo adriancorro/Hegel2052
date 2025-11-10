@@ -10,52 +10,50 @@
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@400;600&display=swap");
-      * { box-sizing: border-box; }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
 
-      body {
-        margin: 0;
+      html, body {
+        height: 100%;
         font-family: "Exo 2", sans-serif;
-        background: radial-gradient(circle at 50% 50%, #021025 0%, #000010 100%);
         color: #ccfaff;
-        overflow-x: hidden;
-        min-height: 100vh;
+        background: radial-gradient(circle at 50% 50%, #021025 0%, #000010 100%);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        overflow-x: hidden;
       }
 
-      /* === Fondo holográfico === */
-      body::before {
-        content: "";
+      /* === Capas base === */
+      #bg, #meteor {
         position: fixed;
         top: 0; left: 0;
         width: 100%; height: 100%;
+        pointer-events: none;
+      }
+      #bg { z-index: 0; }
+      #meteor { z-index: 1; }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
         background: linear-gradient(120deg, rgba(0,255,255,0.1), rgba(100,0,255,0.1));
         background-size: 200% 200%;
         animation: bgShift 10s ease-in-out infinite alternate;
         z-index: 0;
       }
-
       @keyframes bgShift {
         0% { background-position: 0% 50%; }
         100% { background-position: 100% 50%; }
       }
 
-      canvas#bg {
-        position: fixed; top: 0; left: 0;
-        width: 100%; height: 100%;
-        z-index: 1;
-        pointer-events: none;
-      }
-
-      .container {
-        position: relative;
-        z-index: 3;
+      main {
+        flex: 1;
+        z-index: 5; /* 🔥 por encima de los canvas */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        flex: 1;
         padding: 60px 20px 40px;
         text-align: center;
       }
@@ -68,7 +66,6 @@
         filter: drop-shadow(0 0 25px #00ffff);
         animation: facePulse 6s ease-in-out infinite alternate;
       }
-
       @keyframes facePulse {
         from { filter: drop-shadow(0 0 20px #00ffff); }
         to { filter: drop-shadow(0 0 40px #8b5cff); }
@@ -83,8 +80,7 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-shadow: 0 0 25px #00ffff, 0 0 45px #8b5cff;
-        margin-top: 10px;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
       }
 
       p {
@@ -118,7 +114,6 @@
         box-shadow: 0 0 25px #00ffff;
         transition: all 0.3s ease-in-out;
       }
-
       button:hover {
         transform: scale(1.08);
         box-shadow: 0 0 40px #9b59ff;
@@ -142,32 +137,18 @@
         color: #d8ffff;
       }
 
-      .cursor {
-        display: inline-block;
-        width: 8px; height: 1em;
-        background-color: #00ffff;
-        margin-left: 3px;
-        animation: blink 1s infinite;
-      }
-
-      @keyframes blink {
-        0%,50%,100% { opacity: 1; }
-        25%,75% { opacity: 0; }
-      }
-
       footer {
-        z-index: 4;
-        width: 100%;
+        z-index: 10; /* 🔥 más alto que cualquier canvas */
         text-align: center;
         padding: 25px 0;
-        background: rgba(0, 10, 25, 0.7);
+        background: rgba(0, 10, 25, 0.8);
         border-top: 1px solid rgba(0, 255, 255, 0.3);
         box-shadow: 0 -4px 25px rgba(0, 255, 255, 0.1);
         font-size: 1em;
         color: #c8ffff;
         text-shadow: 0 0 8px #00ffff;
+        position: relative;
       }
-
       footer a {
         color: #00ffff;
         text-decoration: none;
@@ -175,7 +156,6 @@
         text-shadow: 0 0 10px #00ffff;
         transition: 0.3s;
       }
-
       footer a:hover {
         color: #9b59ff;
         text-shadow: 0 0 15px #9b59ff;
@@ -190,8 +170,9 @@
 
   <body>
     <canvas id="bg"></canvas>
+    <canvas id="meteor"></canvas>
 
-    <div class="container">
+    <main>
       <svg class="hegel-face" viewBox="0 0 100 100">
         <defs>
           <linearGradient id="neonGradient" x1="0" y1="0" x2="1" y2="1">
@@ -213,7 +194,7 @@
       <textarea id="prompt" placeholder="Conversa con Hegel, lo que quieras..."></textarea>
       <button id="sendBtn">Consultar</button>
       <div id="respuesta"></div>
-    </div>
+    </main>
 
     <footer>
       Creado por <a href="https://github.com/adriancorro" target="_blank">Adrián Corro</a>
@@ -221,152 +202,121 @@
     </footer>
 
     <script>
-      /* === Fondo de líneas energéticas === */
-      const canvas = document.getElementById("bg");
-      const ctx = canvas.getContext("2d");
-      let lines = [];
-      function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+      /* === Fondo dinámico === */
+      const bg = document.getElementById("bg");
+      const ctx = bg.getContext("2d");
+      function resize() { bg.width = innerWidth; bg.height = innerHeight; }
       window.addEventListener("resize", resize); resize();
 
-      class Line {
-        constructor() {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * canvas.height;
-          this.length = Math.random() * 80 + 40;
-          this.angle = Math.random() * Math.PI * 2;
-          this.speed = Math.random() * 0.3 + 0.15;
-          this.alpha = Math.random() * 0.3 + 0.1;
-        }
-        update() {
-          this.x += Math.cos(this.angle) * this.speed;
-          this.y += Math.sin(this.angle) * this.speed;
-          if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-          }
-        }
-        draw() {
-          const x2 = this.x + Math.cos(this.angle) * this.length;
-          const y2 = this.y + Math.sin(this.angle) * this.length;
-          ctx.strokeStyle = `rgba(0,255,255,${this.alpha})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(x2, y2); ctx.stroke();
-        }
-      }
+      const lines = Array.from({ length: 25 }, () => ({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        len: Math.random() * 80 + 40,
+        ang: Math.random() * Math.PI * 2,
+        spd: Math.random() * 0.3 + 0.15,
+        alp: Math.random() * 0.3 + 0.1
+      }));
 
-      for (let i = 0; i < 25; i++) lines.push(new Line());
-      (function animate() {
+      function animateLines() {
         ctx.fillStyle = "rgba(0, 0, 20, 0.25)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        lines.forEach(l => { l.update(); l.draw(); });
-        requestAnimationFrame(animate);
-      })();
+        ctx.fillRect(0, 0, bg.width, bg.height);
+        lines.forEach(l => {
+          l.x += Math.cos(l.ang) * l.spd;
+          l.y += Math.sin(l.ang) * l.spd;
+          if (l.x < 0 || l.x > innerWidth || l.y < 0 || l.y > innerHeight) {
+            l.x = Math.random() * innerWidth;
+            l.y = Math.random() * innerHeight;
+          }
+          const x2 = l.x + Math.cos(l.ang) * l.len;
+          const y2 = l.y + Math.sin(l.ang) * l.len;
+          ctx.strokeStyle = `rgba(0,255,255,${l.alp})`;
+          ctx.beginPath();
+          ctx.moveTo(l.x, l.y);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        });
+        requestAnimationFrame(animateLines);
+      }
+      animateLines();
+
+      /* === Meteorito 777 === */
+      const meteor = document.getElementById("meteor");
+      const mctx = meteor.getContext("2d");
+      function resizeM() { meteor.width = innerWidth; meteor.height = innerHeight; }
+      resizeM(); window.addEventListener("resize", resizeM);
+
+      function drawMeteor() {
+        const sx = -50, sy = Math.random() * innerHeight * 0.4, ex = innerWidth + 100, ey = sy + 200;
+        const dur = 2000, start = performance.now(), trail = [];
+        function step(t) {
+          const p = (t - start) / dur; if (p > 1) return;
+          const x = sx + (ex - sx) * p, y = sy + (ey - sy) * p;
+          trail.push({ x, y }); if (trail.length > 8) trail.shift();
+          mctx.clearRect(0, 0, meteor.width, meteor.height);
+          for (let i = 0; i < trail.length; i++) {
+            const a = i / trail.length;
+            mctx.beginPath(); mctx.arc(trail[i].x, trail[i].y, 2, 0, Math.PI * 2);
+            mctx.fillStyle = `rgba(0,255,255,${a})`;
+            mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 15; mctx.fill();
+          }
+          mctx.font = "bold 28px Orbitron";
+          mctx.fillStyle = "rgba(0,255,255,0.95)";
+          mctx.shadowColor = "#8b5cff"; mctx.shadowBlur = 25;
+          mctx.fillText("777", x, y);
+          requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+      setInterval(drawMeteor, 7000);
 
       /* === Comunicación con API === */
-      const sendBtn = document.getElementById("sendBtn");
-      const respuestaDiv = document.getElementById("respuesta");
-
-      function typeText(element, text, speed = 10, applyGlow = false) {
-        element.innerHTML = "";
+      const btn = document.getElementById("sendBtn"), resp = document.getElementById("respuesta");
+      function typeText(el, txt, speed = 10, glow = false) {
+        el.innerHTML = "";
         let i = 0;
-        const cursor = document.createElement("span");
-        cursor.classList.add("cursor");
-        element.appendChild(cursor);
-        const interval = setInterval(() => {
-          element.insertBefore(document.createTextNode(text.charAt(i)), cursor);
+        const cur = document.createElement("span");
+        cur.classList.add("cursor");
+        el.appendChild(cur);
+        const int = setInterval(() => {
+          el.insertBefore(document.createTextNode(txt.charAt(i)), cur);
           i++;
-          if (i >= text.length) {
-            clearInterval(interval); cursor.remove();
-            if (applyGlow) {
-              element.classList.add("neon-flash");
-              setTimeout(() => element.classList.remove("neon-flash"), 2500);
+          if (i >= txt.length) {
+            clearInterval(int);
+            cur.remove();
+            if (glow) {
+              el.classList.add("neon-flash");
+              setTimeout(() => el.classList.remove("neon-flash"), 2500);
             }
           }
         }, speed);
       }
 
-      sendBtn.addEventListener("click", async () => {
-        const userPrompt = document.getElementById("prompt").value.trim();
-        if (!userPrompt) { respuestaDiv.textContent = "Por favor, escribele a Hegel."; return; }
-        respuestaDiv.textContent = "🌀 Consultando a Hegel...";
+      btn.addEventListener("click", async () => {
+        const prompt = document.getElementById("prompt").value.trim();
+        if (!prompt) { resp.textContent = "Por favor, escribele a Hegel."; return; }
+        resp.textContent = "🌀 Consultando a Hegel...";
         try {
-          let API_URL =
-            window.location.hostname.includes("localhost")
-              ? "http://localhost:3000/api/route"
-              : window.location.hostname.includes("hegel2052.com")
-              ? "https://www.hegel2052.com/api/route"
-              : "https://hegel2052.vercel.app/api/route";
+          let API_URL = window.location.hostname.includes("localhost")
+            ? "http://localhost:3000/api/route"
+            : window.location.hostname.includes("hegel2052.com")
+            ? "https://www.hegel2052.com/api/route"
+            : "https://hegel2052.vercel.app/api/route";
 
-          const res = await fetch(API_URL, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: userPrompt }),
+          const r = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
           });
-          const data = await res.json();
-
+          const data = await r.json();
           if (data.result) {
-            const isFromKeywords = data.fromKeywords === true || data.result.includes("Adrián Corro");
-            if (isFromKeywords) typeText(respuestaDiv, data.result, 10, true);
-            else respuestaDiv.textContent = data.result;
-          } else respuestaDiv.textContent = "Error en la respuesta del servidor.";
+            const fromKeywords = data.fromKeywords === true || data.result.includes("Adrián Corro");
+            fromKeywords ? typeText(resp, data.result, 10, true) : resp.textContent = data.result;
+          } else resp.textContent = "Error en la respuesta del servidor.";
         } catch (e) {
           console.error(e);
-          respuestaDiv.textContent = "Error al conectar con el servidor.";
+          resp.textContent = "Error al conectar con el servidor.";
         }
       });
-
-      /* === Meteorito futurista “777” === */
-      const meteorCanvas = document.createElement("canvas");
-      meteorCanvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;";
-      document.body.appendChild(meteorCanvas);
-      const mctx = meteorCanvas.getContext("2d");
-
-      function resizeMeteor() {
-        meteorCanvas.width = innerWidth;
-        meteorCanvas.height = innerHeight;
-      }
-      window.addEventListener("resize", resizeMeteor);
-      resizeMeteor();
-
-      function drawMeteor() {
-        const startX = -50;
-        const startY = Math.random() * innerHeight * 0.4;
-        const endX = innerWidth + 100;
-        const endY = startY + 200;
-        const duration = 2000;
-        const points = [];
-        const startTime = performance.now();
-
-        function animateMeteor(t) {
-          const progress = (t - startTime) / duration;
-          if (progress > 1) return;
-          const x = startX + (endX - startX) * progress;
-          const y = startY + (endY - startY) * progress;
-          points.push({ x, y });
-          if (points.length > 8) points.shift();
-
-          mctx.clearRect(0, 0, meteorCanvas.width, meteorCanvas.height);
-          for (let i = 0; i < points.length; i++) {
-            const p = points[i];
-            const alpha = i / points.length;
-            mctx.beginPath();
-            mctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-            mctx.fillStyle = `rgba(0,255,255,${alpha})`;
-            mctx.shadowColor = "#8b5cff";
-            mctx.shadowBlur = 15;
-            mctx.fill();
-          }
-
-          mctx.font = "bold 28px Orbitron";
-          mctx.fillStyle = "rgba(0,255,255,0.95)";
-          mctx.shadowColor = "#8b5cff";
-          mctx.shadowBlur = 25;
-          mctx.fillText("777", x, y);
-
-          requestAnimationFrame(animateMeteor);
-        }
-        requestAnimationFrame(animateMeteor);
-      }
-      setInterval(drawMeteor, 7000);
     </script>
   </body>
 </html>
