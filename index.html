@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hegel 2052</title>
 
-    <!-- ✅ Favicon futurista generado -->
-    <link rel="icon" type="image/png" href="A_representation_of_a_futuristic_website_homepage_.png" />
+    <!-- ✅ Favicon futurista -->
+    <link rel="icon" type="image/png" href="f968132f-bffd-4230-8003-5526354d2837.png" />
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Exo+2:wght@400;600&display=swap");
@@ -18,13 +18,13 @@
         background: radial-gradient(circle at 50% 50%, #021025 0%, #000010 100%);
         color: #ccfaff;
         overflow-x: hidden;
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
       }
 
-      /* === Fondo holográfico animado === */
+      /* === Fondo holográfico === */
       body::before {
         content: "";
         position: fixed;
@@ -55,7 +55,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
+        flex: 1;
         padding: 60px 20px 40px;
         text-align: center;
       }
@@ -103,7 +103,6 @@
         resize: none; outline: none;
         backdrop-filter: blur(8px);
         box-shadow: 0 0 15px #0077ff33;
-        z-index: 3;
       }
 
       button {
@@ -133,6 +132,8 @@
         padding: 25px;
         border: 1px solid #00ffff80;
         white-space: pre-wrap;
+        overflow-wrap: break-word;
+        word-break: break-word;
         font-size: 1.1em;
         text-shadow: 0 0 12px #00ffff99;
         min-height: 120px;
@@ -155,8 +156,6 @@
       }
 
       footer {
-        position: relative;
-        bottom: 0;
         z-index: 4;
         width: 100%;
         text-align: center;
@@ -314,6 +313,60 @@
           respuestaDiv.textContent = "Error al conectar con el servidor.";
         }
       });
+
+      /* === Meteorito futurista “777” === */
+      const meteorCanvas = document.createElement("canvas");
+      meteorCanvas.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;";
+      document.body.appendChild(meteorCanvas);
+      const mctx = meteorCanvas.getContext("2d");
+
+      function resizeMeteor() {
+        meteorCanvas.width = innerWidth;
+        meteorCanvas.height = innerHeight;
+      }
+      window.addEventListener("resize", resizeMeteor);
+      resizeMeteor();
+
+      function drawMeteor() {
+        const startX = -50;
+        const startY = Math.random() * innerHeight * 0.4;
+        const endX = innerWidth + 100;
+        const endY = startY + 200;
+        const duration = 2000;
+        const points = [];
+        const startTime = performance.now();
+
+        function animateMeteor(t) {
+          const progress = (t - startTime) / duration;
+          if (progress > 1) return;
+          const x = startX + (endX - startX) * progress;
+          const y = startY + (endY - startY) * progress;
+          points.push({ x, y });
+          if (points.length > 8) points.shift();
+
+          mctx.clearRect(0, 0, meteorCanvas.width, meteorCanvas.height);
+          for (let i = 0; i < points.length; i++) {
+            const p = points[i];
+            const alpha = i / points.length;
+            mctx.beginPath();
+            mctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            mctx.fillStyle = `rgba(0,255,255,${alpha})`;
+            mctx.shadowColor = "#8b5cff";
+            mctx.shadowBlur = 15;
+            mctx.fill();
+          }
+
+          mctx.font = "bold 28px Orbitron";
+          mctx.fillStyle = "rgba(0,255,255,0.95)";
+          mctx.shadowColor = "#8b5cff";
+          mctx.shadowBlur = 25;
+          mctx.fillText("777", x, y);
+
+          requestAnimationFrame(animateMeteor);
+        }
+        requestAnimationFrame(animateMeteor);
+      }
+      setInterval(drawMeteor, 7000);
     </script>
   </body>
 </html>
