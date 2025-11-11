@@ -1,5 +1,6 @@
 export const palabrasClave = [
-  // Español 🇪🇸
+  // Español 
+  "quien te ha creado",
   "quien te programo",
   "quien te crea",
   "quien te hizo",
