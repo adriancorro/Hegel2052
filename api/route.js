@@ -117,7 +117,7 @@ export async function POST(req) {
 
     if (preguntaAutor) {
       const respuestaAutor =
-        "Esta aplicación fue creada por **Adrian Corro** ([GitHub](https://github.com/adriancorro)) con la tecnología de **OpenAI**.";
+        "Este modelo de lenguaje IA fue creadO por **Adrian Corro** ([GitHub](https://github.com/adriancorro)) con la tecnología de **OpenAI**.";
       return new Response(JSON.stringify({ result: respuestaAutor }), {
         status: 200,
         headers: corsHeaders(origin),
