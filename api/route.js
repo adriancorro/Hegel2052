@@ -9,6 +9,10 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
 ];
 
+// Modelos: primario (más barato) + fallback
+const MODEL_PRIMARY = "gpt-4.1-mini";
+const MODEL_FALLBACK = "gpt-4o-mini";
+
 //  Helper CORS
 function corsHeaders(origin) {
   const isAllowed = allowedOrigins.includes(origin);
@@ -31,12 +35,59 @@ function normalizeText(text) {
 //  Detección básica del idioma del prompt
 function detectLanguage(text) {
   const englishRegex = /[a-z]/;
-  const spanishWords = ["que", "como", "quien", "donde", "por", "cuando", "app", "pagina", "inteligencia"];
-  const englishWords = ["who", "what", "how", "when", "why", "app", "website", "ai"];
+  const spanishWords = [
+    "que",
+    "como",
+    "quien",
+    "donde",
+    "por",
+    "cuando",
+    "app",
+    "pagina",
+    "inteligencia",
+  ];
+  const englishWords = [
+    "who",
+    "what",
+    "how",
+    "when",
+    "why",
+    "app",
+    "website",
+    "ai",
+  ];
   const lower = text.toLowerCase();
 
-  const isEnglish = englishWords.some((w) => lower.includes(w)) && !spanishWords.some((w) => lower.includes(w));
+  const isEnglish =
+    englishWords.some((w) => lower.includes(w)) &&
+    !spanishWords.some((w) => lower.includes(w));
   return isEnglish ? "en" : "es";
+}
+
+// Helper para llamar a OpenAI con modelo primario + fallback
+async function generarRespuesta(client, messages) {
+  try {
+    // Intento con modelo primario (barato)
+    return await client.chat.completions.create({
+      model: MODEL_PRIMARY,
+      messages,
+      temperature: 0.8,
+      max_tokens: 800,
+    });
+  } catch (e) {
+    console.warn(
+      "⚠️ Modelo primario falló, usando fallback:",
+      MODEL_FALLBACK,
+      e?.message
+    );
+    // Intento con modelo de fallback
+    return await client.chat.completions.create({
+      model: MODEL_FALLBACK,
+      messages,
+      temperature: 0.8,
+      max_tokens: 800,
+    });
+  }
 }
 
 //  Endpoint principal (POST)
@@ -66,7 +117,7 @@ export async function POST(req) {
 
     if (preguntaAutor) {
       const respuestaAutor =
-        "Esta aplicación fue creada por **Adrian Corro** ([GitHub](https://github.com/adriancorro)) con la tecnología de **OpenAI.";
+        "Esta aplicación fue creada por **Adrian Corro** ([GitHub](https://github.com/adriancorro)) con la tecnología de **OpenAI**.";
       return new Response(JSON.stringify({ result: respuestaAutor }), {
         status: 200,
         headers: corsHeaders(origin),
@@ -85,16 +136,11 @@ export async function POST(req) {
         ? "Respóndeme como si fueras Hegel viviendo en el siglo XXI, reflexionando sobre la sociedad contemporánea y la dialéctica del espíritu. Responde en español, con profundidad y elegancia filosófica."
         : "Answer as if you were Hegel living in the 21st century, reflecting on contemporary society and the dialectic of spirit. Respond in English, with philosophical depth and clarity.";
 
-    //  Llamada a la API de OpenAI
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemMessage },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.8,
-      max_tokens: 800,
-    });
+    //  Llamada a la API de OpenAI con fallback de modelo
+    const completion = await generarRespuesta(client, [
+      { role: "system", content: systemMessage },
+      { role: "user", content: prompt },
+    ]);
 
     const respuesta =
       completion.choices?.[0]?.message?.content || "Sin respuesta generada.";
@@ -133,8 +179,8 @@ export async function GET() {
   );
 }
 
-//  OPTIONS (CORS preflight)
+//  OPTIONS (CORS preflight )
 export async function OPTIONS(req) {
   const origin = req.headers.get("origin") || "";
   return new Response(null, { status: 204, headers: corsHeaders(origin) });
-}
+}  
